@@ -1,5 +1,7 @@
 # VULN-001: vsftpd 2.3.4 Backdoor — Initial case study
 
+> **Catalog ID:** [NET-001](../../FINDINGS-INDEX.md#net-001) · **Categories:** `BD` Backdoors + `RCE` Remote Code Execution · **CWE:** [CWE-912: Hidden Functionality](https://cwe.mitre.org/data/definitions/912.html) (illustrative weakness classification; confirm applicability)
+
 > **Status:** Not tested. This is a planned exercise, not a confirmed vulnerability on the current VM.
 
 ## 1. Candidate information
@@ -7,6 +9,9 @@
 | Field | Value |
 | --- | --- |
 | Finding ID | VULN-001 |
+| Research catalog ID | [NET-001](../../FINDINGS-INDEX.md#net-001) |
+| Categories | `BD` Backdoors; `RCE` Remote Code Execution |
+| CWE classification | [CWE-912](https://cwe.mitre.org/data/definitions/912.html) (candidate) |
 | Candidate | Backdoored vsftpd 2.3.4 distribution |
 | CVE | CVE-2011-2523 |
 | Target | Metasploitable 2 (actual IP to be recorded) |
