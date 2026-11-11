@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="580" viewBox="0 0 1280 580" role="img" aria-labelledby="title desc">
+<title id="title">Kali Linux attacker VM connected to Metasploitable 2 training target</title>
+<desc id="desc">Conceptual two-VM architecture using an isolated VirtualBox internal or host-only network. Neither diagram represents a real scan or screenshot.</desc>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#091328"/><stop offset="100%" stop-color="#18274a"/></linearGradient><linearGradient id="k" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#132e59"/><stop offset="100%" stop-color="#13203e"/></linearGradient><linearGradient id="m" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#463529"/><stop offset="100%" stop-color="#281d28"/></linearGradient><filter id="shadow"><feDropShadow dx="0" dy="14" stdDeviation="20" flood-opacity=".27"/></filter></defs>
+<rect width="1280" height="580" fill="url(#bg)"/>
+<g opacity=".14" stroke="#78a4e8"><path d="M40 135H1240M40 445H1240"/><path d="M155 40V540M1125 40V540"/></g>
+<text x="640" y="67" fill="#edf4ff" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="700">Metasploitable 2 VAPT Lab</text>
+<text x="640" y="98" fill="#b8c6dd" text-anchor="middle" font-family="Arial, sans-serif" font-size="18">Two virtual machines • one isolated penetration-testing environment</text>
+<rect x="66" y="142" width="473" height="340" rx="22" fill="url(#k)" stroke="#4b91ed" stroke-width="2" filter="url(#shadow)"/>
+<rect x="740" y="142" width="473" height="340" rx="22" fill="url(#m)" stroke="#e69c56" stroke-width="2" filter="url(#shadow)"/>
+<rect x="97" y="173" width="411" height="165" rx="12" fill="#080f23" stroke="#315c9a"/>
+<rect x="97" y="173" width="411" height="34" rx="12" fill="#21395d"/><circle cx="117" cy="190" r="5" fill="#ef6868"/><circle cx="134" cy="190" r="5" fill="#edc35e"/><circle cx="151" cy="190" r="5" fill="#78d79a"/>
+<text x="299" y="197" text-anchor="middle" fill="#c5d8ff" font-family="monospace" font-size="14">kali@kali:~</text>
+<text x="119" y="248" fill="#60e5bc" font-family="monospace" font-size="18">┌──(kali)-[~]</text>
+<text x="119" y="279" fill="#ebf5ff" font-family="monospace" font-size="18">└─$ nmap -sV &lt;TARGET_IP&gt;</text>
+<text x="119" y="315" fill="#a5b8d1" font-family="monospace" font-size="15">Testing • Evidence • Reports</text>
+<rect x="771" y="173" width="411" height="165" rx="12" fill="#16151c" stroke="#9a663a"/>
+<rect x="771" y="173" width="411" height="34" rx="12" fill="#55402f"/><circle cx="791" cy="190" r="5" fill="#ef6868"/><circle cx="808" cy="190" r="5" fill="#edc35e"/><circle cx="825" cy="190" r="5" fill="#78d79a"/>
+<text x="977" y="197" text-anchor="middle" fill="#ffe2c5" font-family="monospace" font-size="14">metasploitable:~</text>
+<text x="793" y="246" fill="#ffc68c" font-family="monospace" font-size="18">metasploitable login:</text>
+<text x="793" y="277" fill="#d8d4d1" font-family="monospace" font-size="16">intentionally vulnerable</text>
+<text x="793" y="310" fill="#c9a88b" font-family="monospace" font-size="15">lab target • not production</text>
+<text x="302" y="384" fill="#f5f9ff" text-anchor="middle" font-family="Arial, sans-serif" font-size="27" font-weight="700">Kali Linux VM</text>
+<text x="302" y="414" fill="#9dc7ff" text-anchor="middle" font-family="Arial, sans-serif" font-size="19">Attacker / assessment workstation</text>
+<text x="302" y="446" fill="#c7d8f1" text-anchor="middle" font-family="Arial, sans-serif" font-size="16">Nmap • Metasploit • Manual testing</text>
+<text x="976" y="384" fill="#fef8f0" text-anchor="middle" font-family="Arial, sans-serif" font-size="27" font-weight="700">Metasploitable 2 VM</text>
+<text x="976" y="414" fill="#f7c596" text-anchor="middle" font-family="Arial, sans-serif" font-size="19">Authorized training target</text>
+<text x="976" y="446" fill="#e3c8ac" text-anchor="middle" font-family="Arial, sans-serif" font-size="16">Services • Vulnerable web apps • Linux</text>
+<path d="M540 289H735" stroke="#68dfca" stroke-width="5" stroke-dasharray="13 10"/><path d="m731 279 15 10-15 10" stroke="#68dfca" fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="559" y="244" width="163" height="34" rx="17" fill="#193b47" stroke="#4fe6c4"/><text x="640" y="267" fill="#aafce8" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700">ISOLATED NETWORK</text>
+<text x="640" y="525" fill="#e5edf8" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700">VirtualBox Internal Network / isolated Host-Only</text>
+<text x="640" y="551" fill="#c4cfdf" text-anchor="middle" font-family="Arial, sans-serif" font-size="15">Conceptual illustration • never expose Metasploitable 2 to the public internet</text>
+</svg>
