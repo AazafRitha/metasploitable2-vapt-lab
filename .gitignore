@@ -1,0 +1,44 @@
+# Local secrets / keys
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+*.kdbx
+
+# Temporary session / credential materials
+*.pcap
+*.pcapng
+*.cap
+*.msf
+*.session
+*credentials*.txt
+*passwords*.txt
+*token*.txt
+*.sqlite
+*.db
+
+# VM images / bulky artifacts
+*.vdi
+*.vmdk
+*.ova
+*.ovf
+*.iso
+*.qcow2
+*.vbox
+*.vbox-prev
+
+# System/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+__pycache__/
+*.pyc
+*.swp
+*.tmp
+*.bak
