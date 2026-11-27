@@ -176,7 +176,24 @@ run
 
 Inside a successfully opened shell/session, use `id`, `whoami`, `hostname`, then `exit`.
 
-**Important modern Metasploit compatibility note (2026):** The upstream [module source](https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/unix/ftp/vsftpd_234_backdoor.rb) currently shows a default `cmd/linux/http/x86/meterpreter_reverse_tcp` payload, which may fail on Metasploitable 2's old runtime. An [upstream issue](https://github.com/rapid7/metasploit-framework/issues/21780) documents this, and the proposed [PR #21792](https://github.com/rapid7/metasploit-framework/pull/21792) was closed without merging. **Do not assume `cmd/unix/interact` is available.** Check `show payloads`: if it is supported, select it; otherwise look for a compatible command-only shell payload (for example `cmd/unix/reverse_bash` if listed, with `LHOST` and `LPORT` configured). If the only available payloads fail, document the limitation and use the direct manual method above rather than claiming a successful session.
+**Modern Metasploit compatibility note (verified against the module source):** The current upstream module defines **two targets**:
+
+- **Target 0 — Linux/Unix Command:** defaults to a fetch-delivered Meterpreter payload, which can fail on the old Metasploitable 2 system due to incompatible runtime libraries.
+- **Target 1 — Backdoor Command Shell:** configures `cmd/unix/interact` to interact directly with the bind shell. **This is the preferred target for our legacy lab**, where present.
+
+After `use` and `set RHOSTS`, inspect the installed module:
+
+```text
+show targets
+set TARGET 1
+show payloads
+show options
+run
+```
+
+Only select target 1 if `show targets` labels it **Backdoor Command Shell**. A [previously reported compatibility issue](https://github.com/rapid7/metasploit-framework/issues/21780) affected versions of this module, and the standalone proposed [PR #21792](https://github.com/rapid7/metasploit-framework/pull/21792) was closed without merging. The current source **does** expose the dedicated direct-shell target. If your Kali installation is older and doesn't list that target or the compatible payload, document the mismatch, update Metasploit from trusted package sources as appropriate, or rely on the manual method rather than forcing incompatible payloads.
+
+**Current upstream source:** [vsftpd_234_backdoor.rb](https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/unix/ftp/vsftpd_234_backdoor.rb).
 
 **Metasploit status:** Not attempted on this VM.
 
@@ -189,8 +206,8 @@ Inside a successfully opened shell/session, use `id`, `whoami`, `hostname`, then
 | Port 6200 closed | Trigger didn't activate, listener closed, firewall or target mismatch |
 | Port 6200 already open | Earlier exploit may have left the shell listening; connect carefully or reset VM |
 | Shell connects but shows no prompt | Raw bind shells often have no friendly prompt; enter `id` |
-| Metasploit runs but no session | Check current payload, framework logs, and legacy target compatibility |
-| `cmd/unix/interact` not valid | Known module payload-compatibility problem; don't force an incompatible payload |
+| Metasploit runs but no session | Inspect `show targets` and prefer `Backdoor Command Shell` (usually target 1), rather than legacy-incompatible Meterpreter fetch |
+| `cmd/unix/interact` not valid | Select the `Backdoor Command Shell` target first; an older module may lack this target |
 | Nmap NSE succeeds but manual fails | Script may have triggered and consumed an existing single-use listener; reset before another attempt |
 
 ## 12. Remediation / verification
