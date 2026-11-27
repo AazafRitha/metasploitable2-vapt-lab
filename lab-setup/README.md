@@ -1,73 +1,83 @@
-# Lab setup and initial reconnaissance
+# Lab setup and first scan
 
-## Architecture
+[← Project home](../README.md) · [Vulnerability catalog](../FINDINGS-INDEX.md)
 
-| Component | Role | Network | Actual IP | Status |
-| --- | --- | --- | --- | --- |
-| Kali Linux | Tester | Isolated VM network | TBD | To verify |
-| Metasploitable 2 | Training target | Same isolated VM network | TBD | To verify |
+## 1. Set up a safe virtual network
 
-Use the same **Internal Network** (recommended) for both VMs. A correctly configured **Host-Only** network also works. Do not use Bridged Adapter for the vulnerable target or port-forward any of its services.
+You need **Kali Linux (attacker)** and **Metasploitable 2 (target)** on the same isolated VirtualBox network.
 
-> Do not copy example IPs into the report as if they were real. Record actual address values only when you configure the VMs.
-
-## Before starting
 1. Power off both VMs.
-2. In VirtualBox, open each VM → **Settings → Network**.
-3. Connect both to the same named **Internal Network** (for example `vapt-lab`). An Internal Network often requires manual IP assignment if you have no lab DHCP server. Alternatively, configure Host-Only with suitable isolation and DHCP.
-4. Keep Metasploitable 2 disconnected from any Bridged or NAT adapter while you are testing. If Kali needs internet for package updates, isolate that connectivity from the target and disable it during lab testing.
-5. Take VM snapshots before exploitation.
+2. VirtualBox → each VM → **Settings → Network**.
+3. Set both VMs to the same **Internal Network** (recommended), e.g., `vapt-lab`. If there is no DHCP server, set unique static addresses on the same subnet. A correctly isolated **Host-Only** network also works.
+4. **Never** bridge Metasploitable 2 to your real LAN, port-forward its services, or expose it through a tunnel.
+5. Create a **VM snapshot** before testing.
 
-## Identify target interfaces
+| VM | Purpose | IP (fill after setup) |
+| --- | --- | --- |
+| Kali Linux | Attacker and reporting | TBD |
+| Metasploitable 2 | Intentionally vulnerable target | TBD |
+
+## 2. Find the IP addresses
 
 On **Metasploitable 2**:
 
 ```bash
 ifconfig
-ip route
 ```
 
-On **Kali Linux**:
+On **Kali**:
 
 ```bash
 ip -4 addr
-ip route
 ```
 
-Confirm both machines use reachable addresses on the same isolated subnet. If your Internal Network has no DHCP service, give each lab interface a unique static IP on the same subnet.
-
-## Connectivity test
-
-From Kali, after replacing the placeholder with the **actual isolated target IP**:
+Verify the IP of your target belongs to **your own isolated VM**. On Kali:
 
 ```bash
 ping -c 3 <TARGET_IP>
 ```
 
-Only continue when you have confirmed the target IP belongs to your own Metasploitable 2 VM.
+## 3. Save the first scan
 
-## First baseline scan
+In Kali, clone the project and run a single-host service scan:
 
 ```bash
-mkdir -p lab-setup/scans
+git clone https://github.com/AazafRitha/metasploitable2-vapt-lab.git
+cd metasploitable2-vapt-lab
 sudo nmap -sC -sV -oA lab-setup/scans/initial-service-scan <TARGET_IP>
 ```
 
-**Note:** Run from a local clone of this repo in Kali; or save scans locally and copy sanitized results into this folder. The command creates `.nmap`, `.gnmap`, and `.xml` files.
+This saves `.nmap`, `.gnmap`, and `.xml` evidence files in `lab-setup/scans/`.
 
-### Optional full TCP discovery after baseline
+**Optional full TCP discovery** (only on the authorized target):
 
 ```bash
-sudo nmap -sS -p- --reason -oA lab-setup/scans/full-tcp-discovery <TARGET_IP>
+sudo nmap -sS -p- -oA lab-setup/scans/full-tcp-scan <TARGET_IP>
 ```
 
-These are **single-host scans** against the isolated VM. Do not scan unrelated networks.
+**Do not invent scan output.** Replace `<TARGET_IP>` with the target VM's actual isolated address.
 
-## Scan documentation
+## 4. Test and document one vulnerability at a time
 
-| Date | Tool/version | Target | Filename | Key observations |
-| --- | --- | --- | --- | --- |
-| TBD | TBD | TBD | TBD | Not yet scanned |
+1. **Discover:** Check the running service and version in Nmap output.
+2. **Enumerate:** Investigate the service further and save logs.
+3. **Validate:** Check CVE/advisory prerequisites; a version match alone is not proof.
+4. **Demonstrate:** Test with Metasploit and manually when appropriate; avoid persistence and destructive payloads.
+5. **Record evidence:** Store service-specific logs in `vulnerabilities/VULN-###-name/scans/` and numbered screenshots in `screenshots/`.
+6. **Report:** Document actual commands, results, CVE/CWE, categories, impact, remediation, references, and failures.
+7. **Update GitHub:** Commit sanitized evidence and mark the [index](../FINDINGS-INDEX.md) with the actual verification status.
 
-## Evidence policy
-Sanitize before publishing; keep unmodified originals privately if they contain sensitive information. Record what was observed, not what was expected. Store screenshots and service-level results within the relevant vulnerability folder.
+## 5. Save changes to GitHub
+
+From the repository directory in Kali:
+
+```bash
+git status
+git add README.md FINDINGS-INDEX.md lab-setup/ vulnerabilities/
+git commit -m "docs: document first lab findings"
+git push
+```
+
+Only commit files you intentionally reviewed. Never upload credentials, private keys, session data, or unrelated sensitive content.
+
+**Next:** Open [VULN-001 vsftpd case study](../vulnerabilities/VULN-001-vsftpd-backdoor/README.md) if your scan confirms an applicable FTP service.

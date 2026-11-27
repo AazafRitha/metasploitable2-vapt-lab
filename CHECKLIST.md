@@ -1,31 +1,29 @@
-# Lab progress checklist
+# Project progress
 
-## Stage 1 — Repository and safety
-- [x] Create GitHub repository
-- [x] Add documentation structure and reusable report templates
-- [ ] Confirm VirtualBox isolated network configuration
-- [ ] Take clean snapshots of Kali and Metasploitable 2
-- [ ] Record OS and tool versions
+[← Project home](README.md) · [Lab instructions](lab-setup/README.md)
 
-## Stage 2 — Reconnaissance
-- [ ] Record Kali IP and Metasploitable 2 IP
-- [ ] Verify Kali-to-target connectivity
-- [ ] Capture first scoped Nmap scan in `lab-setup/scans/`
-- [ ] Identify attack surface and prioritize candidate vulnerabilities
+## Phase 1 — Prepare
+- [x] Create GitHub repository and simple folder structure
+- [x] Add candidate index with categories and CVE references
+- [ ] Check isolated Kali and Metasploitable 2 networking
+- [ ] Take VM snapshots
+- [ ] Record VM IP addresses
 
-## Stage 3 — Individual case studies
-- [ ] VULN-001: Validate vsftpd backdoor candidate
-- [ ] Record Metasploit testing, where applicable
-- [ ] Record manual verification, where applicable
-- [ ] Save screenshots and raw scan output
-- [ ] Document impact, limitations, references, and remediation
-- [ ] Add additional cases only after baseline enumeration
+## Phase 2 — Discover
+- [ ] Run initial Nmap scan
+- [ ] Save Nmap output under `lab-setup/scans/`
+- [ ] Choose first candidate based on real scan results
 
-## Stage 4 — Consolidated VAPT report
-- [ ] Executive summary and scope
-- [ ] Methodology and assessment dates
-- [ ] Findings table with verified status/severity
-- [ ] Evidence-backed technical summaries
-- [ ] Remediation priorities, test limitations, and conclusion
+## Phase 3 — Document first finding
+- [ ] Enumerate the service
+- [ ] Test using Metasploit (if applicable)
+- [ ] Test manually (if applicable)
+- [ ] Add real screenshots and scan results to `VULN-001`
+- [ ] Explain observed impact and remediation
+- [ ] Update catalog verification status and push to GitHub
 
-**Rule:** Check a task only after it has actually been completed.
+## Phase 4 — Build portfolio
+- [ ] Document further verified cases one by one
+- [ ] Prepare the final consolidated report using the template
+
+**Rule:** Do not mark testing completed until supported by actual evidence.

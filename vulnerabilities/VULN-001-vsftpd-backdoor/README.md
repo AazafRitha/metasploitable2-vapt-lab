@@ -3,6 +3,8 @@
 > **Catalog ID:** [NET-001](../../FINDINGS-INDEX.md#net-001) · **Categories:** `BD` Backdoors + `RCE` Remote Code Execution · **CWE:** [CWE-912: Hidden Functionality](https://cwe.mitre.org/data/definitions/912.html) (illustrative weakness classification; confirm applicability)
 
 > **Status:** Not tested. This is a planned exercise, not a confirmed vulnerability on the current VM.
+>
+> [← Project home](../../README.md) · [Full candidate index](../../FINDINGS-INDEX.md) · [Lab setup](../../lab-setup/README.md)
 
 ## 1. Candidate information
 
@@ -34,7 +36,7 @@ nmap -sV -p 21 -oN scans/01-ftp-version.nmap <TARGET_IP>
 ```
 
 **Actual output:** Pending.  
-**Evidence:** [scans/README.md](scans/README.md)  
+**Evidence:** Add the real Nmap output to `scans/` once tested.  
 **Interpretation:** Complete after scan, including actual banner/version and confidence.
 
 ## 4. Enumeration
