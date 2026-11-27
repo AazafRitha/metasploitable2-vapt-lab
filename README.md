@@ -8,6 +8,63 @@ This is my practical penetration-testing portfolio using a personally owned, **i
 
 > **Status:** **89 report folders prepared; 0 confirmed vulnerabilities documented.** The research catalog is not proof of vulnerability.
 
+## Initial reconnaissance — 27 November 2026
+
+**Full TCP scan complete:** **29 open ports**, **65,506 closed ports**, against `192.168.95.131` from Kali `192.168.95.128` using **Nmap 7.99** (`-sS -sV -sC -p- --open`).
+
+| Open TCP ports | Detected services (selected) |
+| --- | --- |
+| `21`, `2121` | vsftpd 2.3.4, ProFTPD 1.3.1 |
+| `22`, `23`, `25`, `53`, `80` | SSH, Telnet, SMTP, DNS, Apache HTTP |
+| `139`, `445`, `2049` | Samba, NFS |
+| `1524`, `3632`, `6667`, `6697` | Bind shell fingerprint, DistCC, UnrealIRCd |
+| `3306`, `5432`, `5900` | MySQL, PostgreSQL, VNC |
+| Remaining ports | See the complete 29-port table below |
+
+<details>
+<summary><strong>View all 29 open TCP ports and detected services</strong></summary>
+
+| Port | Service | Reported software / identification |
+| ---: | --- | --- |
+| 21 | ftp | vsftpd 2.3.4 |
+| 22 | ssh | OpenSSH 4.7p1 Debian 8ubuntu1 |
+| 23 | telnet | Linux telnetd |
+| 25 | smtp | Postfix smtpd |
+| 53 | domain | ISC BIND 9.4.2 |
+| 80 | http | Apache httpd 2.2.8 (Ubuntu) DAV/2 |
+| 111 | rpcbind | RPCbind v2 |
+| 139 | netbios-ssn | Samba smbd 3.X–4.X |
+| 445 | netbios-ssn | Samba smbd 3.0.20-Debian |
+| 512 | exec | netkit-rsh rexecd |
+| 513 | login | rlogind (OpenBSD or Solaris fingerprint) |
+| 514 | tcpwrapped | Service not identified |
+| 1099 | java-rmi | GNU Classpath grmiregistry |
+| 1524 | bindshell | Metasploitable root shell (Nmap identification) |
+| 2049 | nfs | NFS v2–v4 |
+| 2121 | ftp | ProFTPD 1.3.1 |
+| 3306 | mysql | MySQL 5.0.51a-3ubuntu5 |
+| 3632 | distccd | distccd v1 / GNU 4.2.4 |
+| 5432 | postgresql | PostgreSQL 8.3.0–8.3.7 |
+| 5900 | vnc | VNC protocol 3.3 |
+| 6000 | X11 | X11 |
+| 6667 | irc | UnrealIRCd |
+| 6697 | irc | UnrealIRCd |
+| 8180 | unknown | Unknown (Nmap could not identify) |
+| 8787 | drb | Ruby DRb RMI (Ruby 1.8) |
+| 40543 | status | RPC status v1 |
+| 41662 | mountd | RPC mountd v1–v3 |
+| 54420 | java-rmi | GNU Classpath grmiregistry |
+| 57382 | nlockmgr | RPC nlockmgr v1–v4 |
+
+</details>
+
+**[Full reconnaissance report and all 29 ports](lab-setup/OPEN-PORTS.md)** · [First case study: VULN-001](vulnerabilities/network/VULN-001-vsftpd-backdoor/README.md)
+
+**Screenshot:** Pending. Once the real Nmap terminal screenshot is added at `lab-setup/screenshots/01-all-open-ports.png`, it can be embedded here. No screenshot or exploit success has been fabricated.
+
+> **Evidence boundary:** Scan confirms the vsftpd version and anonymous FTP access, **not** successful exploitation of the backdoor or other CVEs.
+
+
 ## Start here
 
 | Step | Open | What you will find |
