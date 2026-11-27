@@ -14,8 +14,10 @@ You need **Kali Linux (attacker)** and **Metasploitable 2 (target)** on the same
 
 | VM | Purpose | IP (fill after setup) |
 | --- | --- | --- |
-| Kali Linux | Attacker and reporting | TBD |
-| Metasploitable 2 | Intentionally vulnerable target | TBD |
+| Kali Linux | Attacker and reporting | `192.168.95.128` |
+| Metasploitable 2 | Intentionally vulnerable target | `192.168.95.131` |
+
+**First baseline scan completed:** [29 open TCP ports — 27 November 2026](OPEN-PORTS.md). The precise VirtualBox/VMware adapter isolation and snapshots have not yet been independently verified.
 
 ## 2. Find the IP addresses
 
