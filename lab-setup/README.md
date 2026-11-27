@@ -63,7 +63,7 @@ sudo nmap -sS -p- -oA lab-setup/scans/full-tcp-scan <TARGET_IP>
 2. **Enumerate:** Investigate the service further and save logs.
 3. **Validate:** Check CVE/advisory prerequisites; a version match alone is not proof.
 4. **Demonstrate:** Test with Metasploit and manually when appropriate; avoid persistence and destructive payloads.
-5. **Record evidence:** Store service-specific logs in `vulnerabilities/VULN-###-name/scans/` and numbered screenshots in `screenshots/`.
+5. **Record evidence:** Store service-specific logs in `vulnerabilities/<group>/VULN-###-name/scans/` and numbered screenshots in `screenshots/`.
 6. **Report:** Document actual commands, results, CVE/CWE, categories, impact, remediation, references, and failures.
 7. **Update GitHub:** Commit sanitized evidence and mark the [index](../FINDINGS-INDEX.md) with the actual verification status.
 
@@ -80,4 +80,4 @@ git push
 
 Only commit files you intentionally reviewed. Never upload credentials, private keys, session data, or unrelated sensitive content.
 
-**Next:** Open [VULN-001 vsftpd case study](../vulnerabilities/VULN-001-vsftpd-backdoor/README.md) if your scan confirms an applicable FTP service.
+**Next:** Open [VULN-001 vsftpd case study](../vulnerabilities/network/VULN-001-vsftpd-backdoor/README.md) if your scan confirms an applicable FTP service.

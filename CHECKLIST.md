@@ -5,6 +5,7 @@
 ## Phase 1 — Prepare
 - [x] Create GitHub repository and simple folder structure
 - [x] Add candidate index with categories and CVE references
+- [x] Prepare 89 individual vulnerability report folders (48 Network, 9 DVWA, 32 Mutillidae)
 - [ ] Check isolated Kali and Metasploitable 2 networking
 - [ ] Take VM snapshots
 - [ ] Record VM IP addresses
