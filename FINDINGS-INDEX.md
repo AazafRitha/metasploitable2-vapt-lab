@@ -37,105 +37,105 @@ Each candidate can have **multiple tags**. For example, vsftpd backdoor = `BD` +
 
 | ID | Candidate | Service / endpoint | CVE | Categories | Lab status | Report |
 | --- | --- | --- | --- | --- | --- | --- |
-| **NET-001** | vsftpd 2.3.4 backdoor | FTP / 21 | [CVE-2011-2523](https://nvd.nist.gov/vuln/detail/CVE-2011-2523) | `BD` `RCE` | Not tested | [VULN-001](vulnerabilities/VULN-001-vsftpd-backdoor/README.md) |
-| **NET-002** | UnrealIRCd 3.2.8.1 backdoor | IRC / 6667 | [CVE-2010-2075](https://nvd.nist.gov/vuln/detail/CVE-2010-2075) | `BD` `RCE` | Not tested | — |
-| **NET-003** | Ingreslock root bind shell | TCP / 1524 | — | `BD` `RCE` `AUTH` | Not tested | — |
-| **NET-004** | DistCC remote command execution | DistCC / 3632 | [CVE-2004-2687](https://nvd.nist.gov/vuln/detail/CVE-2004-2687) | `RCE` `MIS` | Not tested | — |
-| **NET-005** | Samba username-map script command injection | SMB / 139,445 | [CVE-2007-2447](https://nvd.nist.gov/vuln/detail/CVE-2007-2447) | `RCE` `INJ` `MIS` | Not tested | — |
-| **NET-006** | Java RMI insecure remote execution candidate | RMI / 1099 | — | `RCE` `MIS` | Not tested | — |
-| **NET-007** | Ruby DRb exposed remote object execution candidate | DRb / 8787 | — | `RCE` `MIS` | Not tested | — |
-| **NET-008** | Legacy wiki command-injection candidate (identify product first) | HTTP / 80 | — | `RCE` `WEB` `INJ` `EOL` | Not tested | — |
-| **NET-009** | PHP-CGI argument injection (only if CGI mode is used) | HTTP / 80 | [CVE-2012-1823](https://nvd.nist.gov/vuln/detail/CVE-2012-1823) | `RCE` `WEB` `INJ` | Not tested | — |
-| **NET-010** | Tomcat Manager authenticated WAR deployment | Tomcat / 8180 | — | `AUTH` `WEB` `RCE` `MIS` | Not tested | — |
-| **NET-011** | ProFTPD mod_sql SQL injection (if mod_sql enabled) | FTP / 2121 | [CVE-2009-0542](https://nvd.nist.gov/vuln/detail/CVE-2009-0542) | `INJ` `DB` `AUTH` | Not tested | — |
-| **NET-012** | Default SSH credentials | SSH / 22 | — | `AUTH` `MIS` | Not tested | — |
-| **NET-013** | Additional weak local account passwords | Linux accounts | — | `AUTH` `MIS` | Not tested | — |
-| **NET-014** | Default/weak Telnet credentials | Telnet / 23 | — | `AUTH` `PROTO` | Not tested | — |
-| **NET-015** | Trust-based Rexec access | Rexec / 512 | — | `AUTH` `MIS` `PROTO` | Not tested | — |
-| **NET-016** | Trust-based Rlogin access | Rlogin / 513 | — | `AUTH` `MIS` `PROTO` | Not tested | — |
-| **NET-017** | Trust-based Rsh access | Rsh / 514 | — | `AUTH` `MIS` `PROTO` | Not tested | — |
-| **NET-018** | MySQL root access with empty password | MySQL / 3306 | — | `DB` `AUTH` `MIS` | Not tested | — |
-| **NET-019** | PostgreSQL default credentials | PostgreSQL / 5432 | — | `DB` `AUTH` `MIS` | Not tested | — |
-| **NET-020** | Weak/default VNC password | VNC / 5900 | — | `AUTH` `MIS` `PROTO` | Not tested | — |
-| **NET-021** | Tomcat Manager weak/default credentials | Tomcat / 8180 | — | `AUTH` `WEB` `MIS` | Not tested | — |
-| **NET-022** | Predictable Debian/Ubuntu-generated SSH keys (if present) | SSH / 22 | [CVE-2008-0166](https://nvd.nist.gov/vuln/detail/CVE-2008-0166) | `AUTH` `PROTO` | Not tested | — |
-| **NET-023** | Anonymous FTP login | FTP / 21 | — | `AUTH` `FILE` `MIS` | Not tested | — |
-| **NET-024** | Anonymous ProFTPD access | FTP / 2121 | — | `AUTH` `FILE` `MIS` | Not tested | — |
-| **NET-025** | Anonymous SMB shares | SMB / 139,445 | — | `FILE` `AUTH` `MIS` | Not tested | — |
-| **NET-026** | Samba symlink traversal / wide links | SMB / 139,445 | — | `FILE` `MIS` `AUTH` | Not tested | — |
-| **NET-027** | NFS export of root filesystem to all clients | NFS / 2049 | — | `FILE` `MIS` `AUTH` | Not tested | — |
-| **NET-028** | Writable NFS export | NFS / 2049 | — | `FILE` `MIS` `AUTH` | Not tested | — |
-| **NET-029** | WebDAV unrestricted PUT/upload | WebDAV / 80 | — | `FILE` `WEB` `MIS` | Not tested | — |
-| **NET-030** | Unauthenticated X11 display access | X11 / 6000 | — | `AUTH` `MIS` `INFO` | Not tested | — |
-| **NET-031** | SMTP user enumeration | SMTP / 25 | — | `INFO` `MIS` | Not tested | — |
-| **NET-032** | SMTP open relay | SMTP / 25 | — | `MIS` `AUTH` | Not tested | — |
-| **NET-033** | DNS zone transfer | DNS / 53 | — | `INFO` `MIS` | Not tested | — |
-| **NET-034** | Exposed AJP connector | AJP / 8009 | — | `MIS` `WEB` | Not tested | — |
-| **NET-035** | Excessive RPC service disclosure | RPC / 111 | — | `INFO` `MIS` | Not tested | — |
-| **NET-036** | PHP configuration disclosure | HTTP / 80 | — | `INFO` `WEB` `MIS` | Not tested | — |
-| **NET-037** | Exposed phpMyAdmin interface | HTTP / 80 | — | `WEB` `DB` `AUTH` `MIS` | Not tested | — |
-| **NET-038** | Cleartext FTP authentication | FTP / 21,2121 | — | `PROTO` `AUTH` | Not tested | — |
-| **NET-039** | Cleartext Telnet authentication | Telnet / 23 | — | `PROTO` `AUTH` | Not tested | — |
-| **NET-040** | Legacy SMB protocol/security configurations | SMB / 139,445 | — | `PROTO` `EOL` `MIS` | Not tested | — |
-| **NET-041** | Outdated Apache HTTP Server 2.2.8 | HTTP / 80 | — | `EOL` `WEB` | Not tested | — |
-| **NET-042** | Outdated Apache Tomcat 5.5 | Tomcat / 8180 | — | `EOL` `WEB` | Not tested | — |
-| **NET-043** | Outdated PHP 5.2.x | Web stack | — | `EOL` `WEB` | Not tested | — |
-| **NET-044** | Unsupported Ubuntu 8.04 | Operating system | — | `EOL` `MIS` | Not tested | — |
-| **NET-045** | Historical kernel local privilege-escalation candidates | Linux kernel | — | `LPE` `EOL` | Not tested | — |
-| **NET-046** | Unsafe privileged SUID executable configuration | Local filesystem | — | `LPE` `MIS` `FILE` | Not tested | — |
-| **NET-047** | Missing browser security headers | HTTP / 80 | — | `WEB` `MIS` | Not tested | — |
-| **NET-048** | Weak TLS/SSL configurations (if a TLS service is running) | TLS services | — | `PROTO` `MIS` | Not tested | — |
+| <a id="net-001"></a>**NET-001** | vsftpd 2.3.4 backdoor | FTP / 21 | [CVE-2011-2523](https://nvd.nist.gov/vuln/detail/CVE-2011-2523) | `BD` `RCE` | Not tested | [VULN-001](vulnerabilities/VULN-001-vsftpd-backdoor/README.md) |
+| <a id="net-002"></a>**NET-002** | UnrealIRCd 3.2.8.1 backdoor | IRC / 6667 | [CVE-2010-2075](https://nvd.nist.gov/vuln/detail/CVE-2010-2075) | `BD` `RCE` | Not tested | — |
+| <a id="net-003"></a>**NET-003** | Ingreslock root bind shell | TCP / 1524 | — | `BD` `RCE` `AUTH` | Not tested | — |
+| <a id="net-004"></a>**NET-004** | DistCC remote command execution | DistCC / 3632 | [CVE-2004-2687](https://nvd.nist.gov/vuln/detail/CVE-2004-2687) | `RCE` `MIS` | Not tested | — |
+| <a id="net-005"></a>**NET-005** | Samba username-map script command injection | SMB / 139,445 | [CVE-2007-2447](https://nvd.nist.gov/vuln/detail/CVE-2007-2447) | `RCE` `INJ` `MIS` | Not tested | — |
+| <a id="net-006"></a>**NET-006** | Java RMI insecure remote execution candidate | RMI / 1099 | — | `RCE` `MIS` | Not tested | — |
+| <a id="net-007"></a>**NET-007** | Ruby DRb exposed remote object execution candidate | DRb / 8787 | — | `RCE` `MIS` | Not tested | — |
+| <a id="net-008"></a>**NET-008** | Legacy wiki command-injection candidate (identify product first) | HTTP / 80 | — | `RCE` `WEB` `INJ` `EOL` | Not tested | — |
+| <a id="net-009"></a>**NET-009** | PHP-CGI argument injection (only if CGI mode is used) | HTTP / 80 | [CVE-2012-1823](https://nvd.nist.gov/vuln/detail/CVE-2012-1823) | `RCE` `WEB` `INJ` | Not tested | — |
+| <a id="net-010"></a>**NET-010** | Tomcat Manager authenticated WAR deployment | Tomcat / 8180 | — | `AUTH` `WEB` `RCE` `MIS` | Not tested | — |
+| <a id="net-011"></a>**NET-011** | ProFTPD mod_sql SQL injection (if mod_sql enabled) | FTP / 2121 | [CVE-2009-0542](https://nvd.nist.gov/vuln/detail/CVE-2009-0542) | `INJ` `DB` `AUTH` | Not tested | — |
+| <a id="net-012"></a>**NET-012** | Default SSH credentials | SSH / 22 | — | `AUTH` `MIS` | Not tested | — |
+| <a id="net-013"></a>**NET-013** | Additional weak local account passwords | Linux accounts | — | `AUTH` `MIS` | Not tested | — |
+| <a id="net-014"></a>**NET-014** | Default/weak Telnet credentials | Telnet / 23 | — | `AUTH` `PROTO` | Not tested | — |
+| <a id="net-015"></a>**NET-015** | Trust-based Rexec access | Rexec / 512 | — | `AUTH` `MIS` `PROTO` | Not tested | — |
+| <a id="net-016"></a>**NET-016** | Trust-based Rlogin access | Rlogin / 513 | — | `AUTH` `MIS` `PROTO` | Not tested | — |
+| <a id="net-017"></a>**NET-017** | Trust-based Rsh access | Rsh / 514 | — | `AUTH` `MIS` `PROTO` | Not tested | — |
+| <a id="net-018"></a>**NET-018** | MySQL root access with empty password | MySQL / 3306 | — | `DB` `AUTH` `MIS` | Not tested | — |
+| <a id="net-019"></a>**NET-019** | PostgreSQL default credentials | PostgreSQL / 5432 | — | `DB` `AUTH` `MIS` | Not tested | — |
+| <a id="net-020"></a>**NET-020** | Weak/default VNC password | VNC / 5900 | — | `AUTH` `MIS` `PROTO` | Not tested | — |
+| <a id="net-021"></a>**NET-021** | Tomcat Manager weak/default credentials | Tomcat / 8180 | — | `AUTH` `WEB` `MIS` | Not tested | — |
+| <a id="net-022"></a>**NET-022** | Predictable Debian/Ubuntu-generated SSH keys (if present) | SSH / 22 | [CVE-2008-0166](https://nvd.nist.gov/vuln/detail/CVE-2008-0166) | `AUTH` `PROTO` | Not tested | — |
+| <a id="net-023"></a>**NET-023** | Anonymous FTP login | FTP / 21 | — | `AUTH` `FILE` `MIS` | Not tested | — |
+| <a id="net-024"></a>**NET-024** | Anonymous ProFTPD access | FTP / 2121 | — | `AUTH` `FILE` `MIS` | Not tested | — |
+| <a id="net-025"></a>**NET-025** | Anonymous SMB shares | SMB / 139,445 | — | `FILE` `AUTH` `MIS` | Not tested | — |
+| <a id="net-026"></a>**NET-026** | Samba symlink traversal / wide links | SMB / 139,445 | — | `FILE` `MIS` `AUTH` | Not tested | — |
+| <a id="net-027"></a>**NET-027** | NFS export of root filesystem to all clients | NFS / 2049 | — | `FILE` `MIS` `AUTH` | Not tested | — |
+| <a id="net-028"></a>**NET-028** | Writable NFS export | NFS / 2049 | — | `FILE` `MIS` `AUTH` | Not tested | — |
+| <a id="net-029"></a>**NET-029** | WebDAV unrestricted PUT/upload | WebDAV / 80 | — | `FILE` `WEB` `MIS` | Not tested | — |
+| <a id="net-030"></a>**NET-030** | Unauthenticated X11 display access | X11 / 6000 | — | `AUTH` `MIS` `INFO` | Not tested | — |
+| <a id="net-031"></a>**NET-031** | SMTP user enumeration | SMTP / 25 | — | `INFO` `MIS` | Not tested | — |
+| <a id="net-032"></a>**NET-032** | SMTP open relay | SMTP / 25 | — | `MIS` `AUTH` | Not tested | — |
+| <a id="net-033"></a>**NET-033** | DNS zone transfer | DNS / 53 | — | `INFO` `MIS` | Not tested | — |
+| <a id="net-034"></a>**NET-034** | Exposed AJP connector | AJP / 8009 | — | `MIS` `WEB` | Not tested | — |
+| <a id="net-035"></a>**NET-035** | Excessive RPC service disclosure | RPC / 111 | — | `INFO` `MIS` | Not tested | — |
+| <a id="net-036"></a>**NET-036** | PHP configuration disclosure | HTTP / 80 | — | `INFO` `WEB` `MIS` | Not tested | — |
+| <a id="net-037"></a>**NET-037** | Exposed phpMyAdmin interface | HTTP / 80 | — | `WEB` `DB` `AUTH` `MIS` | Not tested | — |
+| <a id="net-038"></a>**NET-038** | Cleartext FTP authentication | FTP / 21,2121 | — | `PROTO` `AUTH` | Not tested | — |
+| <a id="net-039"></a>**NET-039** | Cleartext Telnet authentication | Telnet / 23 | — | `PROTO` `AUTH` | Not tested | — |
+| <a id="net-040"></a>**NET-040** | Legacy SMB protocol/security configurations | SMB / 139,445 | — | `PROTO` `EOL` `MIS` | Not tested | — |
+| <a id="net-041"></a>**NET-041** | Outdated Apache HTTP Server 2.2.8 | HTTP / 80 | — | `EOL` `WEB` | Not tested | — |
+| <a id="net-042"></a>**NET-042** | Outdated Apache Tomcat 5.5 | Tomcat / 8180 | — | `EOL` `WEB` | Not tested | — |
+| <a id="net-043"></a>**NET-043** | Outdated PHP 5.2.x | Web stack | — | `EOL` `WEB` | Not tested | — |
+| <a id="net-044"></a>**NET-044** | Unsupported Ubuntu 8.04 | Operating system | — | `EOL` `MIS` | Not tested | — |
+| <a id="net-045"></a>**NET-045** | Historical kernel local privilege-escalation candidates | Linux kernel | — | `LPE` `EOL` | Not tested | — |
+| <a id="net-046"></a>**NET-046** | Unsafe privileged SUID executable configuration | Local filesystem | — | `LPE` `MIS` `FILE` | Not tested | — |
+| <a id="net-047"></a>**NET-047** | Missing browser security headers | HTTP / 80 | — | `WEB` `MIS` | Not tested | — |
+| <a id="net-048"></a>**NET-048** | Weak TLS/SSL configurations (if a TLS service is running) | TLS services | — | `PROTO` `MIS` | Not tested | — |
 
 ### B. DVWA application exercises (9)
 
 | ID | Candidate | Service / endpoint | CVE | Categories | Lab status | Report |
 | --- | --- | --- | --- | --- | --- | --- |
-| **DVWA-001** | Brute force / weak login protection | Login | — | `WEB` `AUTH` | Not tested | — |
-| **DVWA-002** | OS command injection | Command execution | — | `WEB` `INJ` `RCE` | Not tested | — |
-| **DVWA-003** | Cross-Site Request Forgery (CSRF) | CSRF | — | `WEB` `AUTH` | Not tested | — |
-| **DVWA-004** | Local/remote file inclusion | File inclusion | — | `WEB` `FILE` | Not tested | — |
-| **DVWA-005** | SQL injection | SQL injection | — | `WEB` `INJ` `DB` | Not tested | — |
-| **DVWA-006** | Blind SQL injection | Blind SQL injection | — | `WEB` `INJ` `DB` | Not tested | — |
-| **DVWA-007** | Unrestricted file upload | File upload | — | `WEB` `FILE` `RCE` | Not tested | — |
-| **DVWA-008** | Reflected cross-site scripting | Reflected XSS | — | `WEB` `INJ` | Not tested | — |
-| **DVWA-009** | Stored cross-site scripting | Stored XSS | — | `WEB` `INJ` | Not tested | — |
+| <a id="dvwa-001"></a>**DVWA-001** | Brute force / weak login protection | Login | — | `WEB` `AUTH` | Not tested | — |
+| <a id="dvwa-002"></a>**DVWA-002** | OS command injection | Command execution | — | `WEB` `INJ` `RCE` | Not tested | — |
+| <a id="dvwa-003"></a>**DVWA-003** | Cross-Site Request Forgery (CSRF) | CSRF | — | `WEB` `AUTH` | Not tested | — |
+| <a id="dvwa-004"></a>**DVWA-004** | Local/remote file inclusion | File inclusion | — | `WEB` `FILE` | Not tested | — |
+| <a id="dvwa-005"></a>**DVWA-005** | SQL injection | SQL injection | — | `WEB` `INJ` `DB` | Not tested | — |
+| <a id="dvwa-006"></a>**DVWA-006** | Blind SQL injection | Blind SQL injection | — | `WEB` `INJ` `DB` | Not tested | — |
+| <a id="dvwa-007"></a>**DVWA-007** | Unrestricted file upload | File upload | — | `WEB` `FILE` `RCE` | Not tested | — |
+| <a id="dvwa-008"></a>**DVWA-008** | Reflected cross-site scripting | Reflected XSS | — | `WEB` `INJ` | Not tested | — |
+| <a id="dvwa-009"></a>**DVWA-009** | Stored cross-site scripting | Stored XSS | — | `WEB` `INJ` | Not tested | — |
 
 ### C. Mutillidae application exercises (32)
 
 | ID | Candidate | Service / endpoint | CVE | Categories | Lab status | Report |
 | --- | --- | --- | --- | --- | --- | --- |
-| **MUT-001** | Blog-entry SQL injection | add-to-your-blog.php | — | `WEB` `INJ` `DB` | Not tested | — |
-| **MUT-002** | Login SQL injection / authentication bypass | login.php | — | `WEB` `INJ` `DB` `AUTH` | Not tested | — |
-| **MUT-003** | Registration SQL injection | register.php | — | `WEB` `INJ` `DB` | Not tested | — |
-| **MUT-004** | User-info SQL injection | user-info.php | — | `WEB` `INJ` `DB` `INFO` | Not tested | — |
-| **MUT-005** | UID-cookie SQL injection | index.php | — | `WEB` `INJ` `DB` | Not tested | — |
-| **MUT-006** | SQL injection via logged HTTP headers | log-visit.php | — | `WEB` `INJ` `DB` | Not tested | — |
-| **MUT-007** | Reflected XSS in login fields | login.php | — | `WEB` `INJ` | Not tested | — |
-| **MUT-008** | Stored XSS in blog entries | add-to-your-blog.php | — | `WEB` `INJ` | Not tested | — |
-| **MUT-009** | Header-based XSS (User-Agent / Referer) | browser-info.php | — | `WEB` `INJ` | Not tested | — |
-| **MUT-010** | XSS from displayed log entries | show-log.php | — | `WEB` `INJ` | Not tested | — |
-| **MUT-011** | XSS through GET/POST/cookies | captured-data.php | — | `WEB` `INJ` | Not tested | — |
-| **MUT-012** | DOM injection via HTML5 storage | html5-storage.php | — | `WEB` `INJ` | Not tested | — |
-| **MUT-013** | OS command injection | dns-lookup.php | — | `WEB` `INJ` `RCE` | Not tested | — |
-| **MUT-014** | Arbitrary file inclusion | arbitrary-file-inclusion.php | — | `WEB` `FILE` | Not tested | — |
-| **MUT-015** | Arbitrary file read / path traversal | source-viewer.php | — | `WEB` `FILE` `INFO` | Not tested | — |
-| **MUT-016** | Local/remote file or URL loading | text-file-viewer.php | — | `WEB` `FILE` `INFO` | Not tested | — |
-| **MUT-017** | Privilege manipulation through UID cookie | index.php | — | `WEB` `AUTH` | Not tested | — |
-| **MUT-018** | CSRF in blog functionality | add-to-your-blog.php | — | `WEB` `AUTH` | Not tested | — |
-| **MUT-019** | CSRF in polling | user-poll.php | — | `WEB` `AUTH` | Not tested | — |
-| **MUT-020** | Clickjacking via framed content | framing.php | — | `WEB` `AUTH` | Not tested | — |
-| **MUT-021** | Clickjacking in art page | rene-magritte.php | — | `WEB` `AUTH` | Not tested | — |
-| **MUT-022** | Open redirect on credits | credits.php | — | `WEB` `AUTH` | Not tested | — |
-| **MUT-023** | Open redirect in redirect/logger | redirectandlog.php | — | `WEB` `AUTH` | Not tested | — |
-| **MUT-024** | HTTP response splitting | index.php | — | `WEB` `INJ` | Not tested | — |
-| **MUT-025** | HTTP parameter pollution | user-poll.php | — | `WEB` `INJ` | Not tested | — |
-| **MUT-026** | HTTP method validation bypass | user-poll.php | — | `WEB` `AUTH` | Not tested | — |
-| **MUT-027** | Client-side JavaScript validation bypass | login.php | — | `WEB` `AUTH` | Not tested | — |
-| **MUT-028** | Cookies missing HttpOnly | process-commands.php | — | `WEB` `MIS` `AUTH` | Not tested | — |
-| **MUT-029** | Unencrypted database credentials in config | config.inc | — | `INFO` `DB` `MIS` | Not tested | — |
-| **MUT-030** | PHP configuration and path disclosure | phpinfo.php | — | `INFO` `WEB` `MIS` | Not tested | — |
-| **MUT-031** | CSS injection | set-background-color.php | — | `WEB` `INJ` | Not tested | — |
-| **MUT-032** | JSON injection | pen-test-tool-lookup.php | — | `WEB` `INJ` | Not tested | — |
+| <a id="mut-001"></a>**MUT-001** | Blog-entry SQL injection | add-to-your-blog.php | — | `WEB` `INJ` `DB` | Not tested | — |
+| <a id="mut-002"></a>**MUT-002** | Login SQL injection / authentication bypass | login.php | — | `WEB` `INJ` `DB` `AUTH` | Not tested | — |
+| <a id="mut-003"></a>**MUT-003** | Registration SQL injection | register.php | — | `WEB` `INJ` `DB` | Not tested | — |
+| <a id="mut-004"></a>**MUT-004** | User-info SQL injection | user-info.php | — | `WEB` `INJ` `DB` `INFO` | Not tested | — |
+| <a id="mut-005"></a>**MUT-005** | UID-cookie SQL injection | index.php | — | `WEB` `INJ` `DB` | Not tested | — |
+| <a id="mut-006"></a>**MUT-006** | SQL injection via logged HTTP headers | log-visit.php | — | `WEB` `INJ` `DB` | Not tested | — |
+| <a id="mut-007"></a>**MUT-007** | Reflected XSS in login fields | login.php | — | `WEB` `INJ` | Not tested | — |
+| <a id="mut-008"></a>**MUT-008** | Stored XSS in blog entries | add-to-your-blog.php | — | `WEB` `INJ` | Not tested | — |
+| <a id="mut-009"></a>**MUT-009** | Header-based XSS (User-Agent / Referer) | browser-info.php | — | `WEB` `INJ` | Not tested | — |
+| <a id="mut-010"></a>**MUT-010** | XSS from displayed log entries | show-log.php | — | `WEB` `INJ` | Not tested | — |
+| <a id="mut-011"></a>**MUT-011** | XSS through GET/POST/cookies | captured-data.php | — | `WEB` `INJ` | Not tested | — |
+| <a id="mut-012"></a>**MUT-012** | DOM injection via HTML5 storage | html5-storage.php | — | `WEB` `INJ` | Not tested | — |
+| <a id="mut-013"></a>**MUT-013** | OS command injection | dns-lookup.php | — | `WEB` `INJ` `RCE` | Not tested | — |
+| <a id="mut-014"></a>**MUT-014** | Arbitrary file inclusion | arbitrary-file-inclusion.php | — | `WEB` `FILE` | Not tested | — |
+| <a id="mut-015"></a>**MUT-015** | Arbitrary file read / path traversal | source-viewer.php | — | `WEB` `FILE` `INFO` | Not tested | — |
+| <a id="mut-016"></a>**MUT-016** | Local/remote file or URL loading | text-file-viewer.php | — | `WEB` `FILE` `INFO` | Not tested | — |
+| <a id="mut-017"></a>**MUT-017** | Privilege manipulation through UID cookie | index.php | — | `WEB` `AUTH` | Not tested | — |
+| <a id="mut-018"></a>**MUT-018** | CSRF in blog functionality | add-to-your-blog.php | — | `WEB` `AUTH` | Not tested | — |
+| <a id="mut-019"></a>**MUT-019** | CSRF in polling | user-poll.php | — | `WEB` `AUTH` | Not tested | — |
+| <a id="mut-020"></a>**MUT-020** | Clickjacking via framed content | framing.php | — | `WEB` `AUTH` | Not tested | — |
+| <a id="mut-021"></a>**MUT-021** | Clickjacking in art page | rene-magritte.php | — | `WEB` `AUTH` | Not tested | — |
+| <a id="mut-022"></a>**MUT-022** | Open redirect on credits | credits.php | — | `WEB` `AUTH` | Not tested | — |
+| <a id="mut-023"></a>**MUT-023** | Open redirect in redirect/logger | redirectandlog.php | — | `WEB` `AUTH` | Not tested | — |
+| <a id="mut-024"></a>**MUT-024** | HTTP response splitting | index.php | — | `WEB` `INJ` | Not tested | — |
+| <a id="mut-025"></a>**MUT-025** | HTTP parameter pollution | user-poll.php | — | `WEB` `INJ` | Not tested | — |
+| <a id="mut-026"></a>**MUT-026** | HTTP method validation bypass | user-poll.php | — | `WEB` `AUTH` | Not tested | — |
+| <a id="mut-027"></a>**MUT-027** | Client-side JavaScript validation bypass | login.php | — | `WEB` `AUTH` | Not tested | — |
+| <a id="mut-028"></a>**MUT-028** | Cookies missing HttpOnly | process-commands.php | — | `WEB` `MIS` `AUTH` | Not tested | — |
+| <a id="mut-029"></a>**MUT-029** | Unencrypted database credentials in config | config.inc | — | `INFO` `DB` `MIS` | Not tested | — |
+| <a id="mut-030"></a>**MUT-030** | PHP configuration and path disclosure | phpinfo.php | — | `INFO` `WEB` `MIS` | Not tested | — |
+| <a id="mut-031"></a>**MUT-031** | CSS injection | set-background-color.php | — | `WEB` `INJ` | Not tested | — |
+| <a id="mut-032"></a>**MUT-032** | JSON injection | pen-test-tool-lookup.php | — | `WEB` `INJ` | Not tested | — |
 
 ## 4. Turning a candidate into a real finding
 
