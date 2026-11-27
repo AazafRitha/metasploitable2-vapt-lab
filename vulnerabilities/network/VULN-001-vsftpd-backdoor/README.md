@@ -1,6 +1,6 @@
 # VULN-001 — vsftpd 2.3.4 Backdoor Command Execution
 
-> **Assessment status: Not tested on my local VM.** This report contains verified **historical research and planned lab procedures**, **not observed exploit results**.
+> **Assessment status: Service discovered; exploitation not tested.** The 27 November 2026 Nmap scan identified vsftpd 2.3.4 and anonymous FTP access. The backdoor itself has **not** been validated.
 >
 > [← Project home](../../../README.md) · [← Candidate index: NET-001](../../../FINDINGS-INDEX.md#net-001) · [Lab setup](../../../lab-setup/README.md)
 
@@ -15,14 +15,14 @@
 | CVE | [CVE-2011-2523](https://nvd.nist.gov/vuln/detail/CVE-2011-2523) |
 | CWE | [CWE-78](https://cwe.mitre.org/data/definitions/78.html) (NVD classification); supply-chain compromise / hidden functionality is additional context |
 | Published CVSS v3.1 | **9.8 Critical** ([NVD](https://nvd.nist.gov/vuln/detail/CVE-2011-2523)) |
-| Target | Metasploitable 2 — isolated VM IP **TBD** |
+| Target | Metasploitable 2 — `192.168.95.131` (Kali `192.168.95.128`) |
 | Service | FTP, TCP 21 |
 | Backdoor listener | TCP 6200 |
 | Possible impact | Unauthenticated **root** command execution |
-| Local validation | **Not tested** |
+| Local validation | **FTP service confirmed; backdoor not tested** |
 | Manual testing | **Not attempted** |
 | Metasploit testing | **Not attempted** |
-| Test date / evidence | **Pending** |
+| Test date / evidence | **2026-11-27**: [baseline Nmap results](../../../lab-setup/OPEN-PORTS.md); exploit evidence pending |
 
 ## 2. Explanation and historical incident
 
@@ -67,7 +67,7 @@ sudo nmap -sV -p 21 -oN vulnerabilities/network/VULN-001-vsftpd-backdoor/scans/0
 21/tcp open ftp vsftpd 2.3.4
 ```
 
-**Result:** Pending. Save actual Nmap results and evidence screenshot `screenshots/01-ftp-enumeration.png`.
+**Baseline result (2026-11-27):** Nmap 7.99 reports `21/tcp open ftp vsftpd 2.3.4` and `ftp-anon: Anonymous FTP login allowed (FTP code 230)`. See the [real scan summary](../../../lab-setup/OPEN-PORTS.md). A focused FTP scan and actual screenshot remain pending; save them to `screenshots/01-ftp-enumeration.png`.
 
 ## 5. Manual exploitation — Method A: Telnet
 
