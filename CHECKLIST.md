@@ -8,12 +8,12 @@
 - [x] Prepare 89 individual vulnerability report folders (48 Network, 9 DVWA, 32 Mutillidae)
 - [ ] Check isolated Kali and Metasploitable 2 networking
 - [ ] Take VM snapshots
-- [ ] Record VM IP addresses
+- [x] Record VM IP addresses (Kali `192.168.95.128`; target `192.168.95.131`)
 
 ## Phase 2 — Discover
-- [ ] Run initial Nmap scan
-- [ ] Save Nmap output under `lab-setup/scans/`
-- [ ] Choose first candidate based on real scan results
+- [x] Run initial full TCP Nmap scan (29 ports reported)
+- [ ] Copy original Nmap output from Kali into `lab-setup/scans/` and upload real screenshot
+- [x] Choose first candidate based on real scan results (VULN-001 vsftpd 2.3.4)
 
 ## Phase 3 — Document first finding
 - [ ] Enumerate the service
