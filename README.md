@@ -6,7 +6,7 @@
 
 This is my practical penetration-testing portfolio using a personally owned, **isolated Metasploitable 2 virtual machine**. Every researched scenario has its own report folder, where I will document enumeration, manual/Metasploit testing, screenshots, actual findings, and remediation.
 
-> **Status:** **89 report folders prepared; 0 confirmed vulnerabilities documented.** The research catalog is not proof of vulnerability.
+> **Status:** **89 report folders prepared; 1 confirmed vulnerability (VULN-001).** Manual root command execution was demonstrated on 28 November 2026. Metasploit testing remains pending; all other research scenarios remain unverified.
 
 ## Initial reconnaissance — 27 November 2026
 
@@ -64,6 +64,10 @@ This is my practical penetration-testing portfolio using a personally owned, **i
 
 > **Evidence boundary:** Scan confirms the vsftpd version and anonymous FTP access, **not** successful exploitation of the backdoor or other CVEs.
 
+
+## Verified case study
+
+**VULN-001 — vsftpd 2.3.4 backdoor:** Manual exploitation confirmed via Telnet (FTP trigger) and Netcat (TCP 6200). The proof shows `uid=0(root)` and `whoami` → `root`. [Read report and view genuine screenshots](vulnerabilities/network/VULN-001-vsftpd-backdoor/README.md).
 
 ## Start here
 
