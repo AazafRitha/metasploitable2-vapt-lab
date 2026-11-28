@@ -17,7 +17,7 @@
 
 ## Phase 3 — Document first finding
 - [x] Enumerate FTP service — anonymous login verified
-- [ ] Test using Metasploit (if applicable)
+- [x] Test using Metasploit — root Meterpreter session 1 opened (2026-11-28)
 - [x] Test manually — Telnet + Netcat backdoor root shell confirmed
 - [x] Add real manual exploit screenshots and terminal output to `VULN-001`
 - [x] Explain observed root-level RCE impact and remediation in `VULN-001`
