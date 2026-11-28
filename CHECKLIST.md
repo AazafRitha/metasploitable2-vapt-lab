@@ -16,12 +16,12 @@
 - [x] Choose first candidate based on real scan results (VULN-001 vsftpd 2.3.4)
 
 ## Phase 3 — Document first finding
-- [ ] Enumerate the service
+- [x] Enumerate FTP service — anonymous login verified
 - [ ] Test using Metasploit (if applicable)
-- [ ] Test manually (if applicable)
-- [ ] Add real screenshots and scan results to `VULN-001`
-- [ ] Explain observed impact and remediation
-- [ ] Update catalog verification status and push to GitHub
+- [x] Test manually — Telnet + Netcat backdoor root shell confirmed
+- [x] Add real manual exploit screenshots and terminal output to `VULN-001`
+- [x] Explain observed root-level RCE impact and remediation in `VULN-001`
+- [x] Update catalog: VULN-001 confirmed with manual exploitation evidence
 
 ## Phase 4 — Build portfolio
 - [ ] Document further verified cases one by one
