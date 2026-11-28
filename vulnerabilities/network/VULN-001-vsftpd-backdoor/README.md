@@ -1,6 +1,6 @@
 # VULN-001 — vsftpd 2.3.4 Backdoor Command Execution
 
-> **Assessment status: FTP service detected and enumerated; backdoor not yet tested.** Scans from **27 and 28 November 2026** show vsftpd 2.3.4 and Nmap-reported anonymous FTP access. No backdoor exploitation has been performed.
+> **Assessment status: FTP service and anonymous access verified; backdoor not yet tested.** Scans from **27 and 28 November 2026** show vsftpd 2.3.4 and Nmap-reported anonymous FTP access. No backdoor exploitation has been performed.
 >
 > [← Project home](../../../README.md) · [← Candidate index: NET-001](../../../FINDINGS-INDEX.md#net-001) · [Lab setup](../../../lab-setup/README.md)
 
@@ -91,7 +91,7 @@ The `ftp-syst` response additionally reports a connection from `192.168.95.128`,
 - **Screenshot supplied in conversation (28 November 2026)**, awaiting direct upload as `screenshots/01-FTP-Service-Discovery.png` (do not display a broken image link)
 - [Full-host initial reconnaissance](../../../lab-setup/OPEN-PORTS.md)
 
-**Next stage:** FTP-specific enumeration (anonymous-access inspection), followed by controlled backdoor validation. TCP 6200 pre-check has been completed and documented.
+**Next stage:** Controlled backdoor validation. Both the baseline TCP 6200 check and anonymous FTP enumeration have been documented.
 
 ### 4.2 Pre-exploitation TCP 6200 check — actual result (28 November 2026)
 
@@ -110,6 +110,38 @@ nc -nvz 192.168.95.131 6200
 **Interpretation:** TCP 6200 was **not accepting connections** at the time of this check, before any documented backdoor trigger. This is a useful baseline, **not evidence that CVE-2011-2523 is present or absent**. The next step is normal FTP enumeration on port 21.
 
 **Evidence:** [Pre-exploit TCP 6200 terminal output](scans/02-Pre-Exploit-Port-6200-Check.txt). The original screenshot was supplied in the conversation on 28 November 2026; a GitHub image link will be added only after a binary upload is confirmed.
+
+### 4.3 Anonymous FTP enumeration — actual result (28 November 2026)
+
+**General command:** `ftp -inv <TARGET_IP>`  
+**Command used on Kali:** `ftp -inv 192.168.95.131`
+
+**Observed commands and significant replies:**
+
+```text
+220 (vsFTPd 2.3.4)
+ftp> user anonymous anonymous@example.com
+331 Please specify the password.
+230 Login successful.
+ftp> pwd
+Remote directory: /
+ftp> ls
+229 Entering Extended Passive Mode (|||24487|).
+150 Here comes the directory listing.
+226 Directory send OK.
+ftp> quit
+221 Goodbye.
+```
+
+**Interpretation:** Anonymous FTP login was **confirmed successful** (`230`). The working directory was `/`; the directory listing completed successfully (`226`) but **no files or directories were displayed** in this session. This demonstrates anonymous access, **not file upload permissions or exploitation of CVE-2011-2523**.
+
+**Real screenshot evidence:** [02-FTP-Enumeration.png](screenshots/02-FTP-Enumeration.png) — compressed PNG representation of the supplied original screenshot, with no synthetic terminal output.
+
+![Observed anonymous FTP login, pwd and ls](screenshots/02-FTP-Enumeration.png)
+
+**Terminal transcription:** [03-Anonymous-FTP-Enumeration.txt](scans/03-Anonymous-FTP-Enumeration.txt).
+
+**Next step:** Manually trigger the backdoor on TCP 21 and independently check whether TCP 6200 opens on the isolated training VM.
 
 ## 5. Manual exploitation — Method A: Telnet
 
@@ -260,7 +292,8 @@ In a genuine environment: remove compromised binaries, reinstall from a trusted 
 
 - [ ] `screenshots/01-FTP-Service-Discovery.png` — image uploaded to GitHub (screenshot already supplied in chat)
 - [x] `scans/01-FTP-Service-Discovery.txt` — actual FTP discovery terminal transcript
-- [ ] `screenshots/02-manual-trigger.png` — actual trigger command and response
+- [x] `screenshots/02-FTP-Enumeration.png` — actual anonymous FTP login and directory enumeration
+- [ ] `screenshots/03-manual-trigger.png` — actual trigger command and response
 - [ ] `screenshots/03-manual-root-proof.png` — actual `id` output
 - [ ] `screenshots/04-nmap-nse.png` — optional NSE result
 - [ ] `screenshots/05-metasploit-options.png` — real module/options/payload
@@ -268,7 +301,7 @@ In a genuine environment: remove compromised binaries, reinstall from a trusted 
 - [ ] `scans/01-ftp-version.nmap` — original scan result
 - [ ] `scans/02-nse-validation.nmap` — optional active validation output
 
-The FTP discovery **terminal transcript is committed**. The supplied PNG screenshot has **not** yet been committed. Other exploitation evidence is still pending.
+FTP discovery and anonymous enumeration **terminal transcripts have been committed**, and the anonymous-FTP enumeration **PNG screenshot is uploaded**. The earlier FTP discovery PNG is still pending; all exploitation evidence is pending.
 
 ## 14. References
 
