@@ -69,6 +69,12 @@ This is my practical penetration-testing portfolio using a personally owned, **i
 
 **VULN-001 — vsftpd 2.3.4 backdoor:** Manual exploitation confirmed via Telnet (FTP trigger) and Netcat (TCP 6200), followed by a successful root Meterpreter session via Metasploit. The manual proof shows `uid=0(root)` and `whoami` → `root`; Metasploit returned `Server username: root`. [Read report and view genuine screenshots](vulnerabilities/network/VULN-001-vsftpd-backdoor/README.md).
 
+**Verified screenshot — Meterpreter root session**
+
+![Metasploit vsftpd backdoor exploit — confirmed root Meterpreter session](vulnerabilities/network/VULN-001-vsftpd-backdoor/screenshots/09-Metasploit-Root-Session.png)
+
+[View all real VULN-001 screenshots and technical steps](vulnerabilities/network/VULN-001-vsftpd-backdoor/README.md).
+
 ## Start here
 
 | Step | Open | What you will find |
