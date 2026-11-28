@@ -328,6 +328,27 @@ Only select target 1 if `show targets` labels it **Backdoor Command Shell**. A [
 
 **Metasploit status:** Not attempted on this VM.
 
+### 10.1 Actual Metasploit configuration — 28 November 2026
+
+The Kali screenshot shows `show options` inside `exploit/unix/ftp/vsftpd_234_backdoor`.
+
+| Option | Observed value |
+| --- | --- |
+| `RHOSTS` | `192.168.95.131` — correct target |
+| `RPORT` | `21` — correct FTP port |
+| Exploit target | `0 — Linux/Unix Command` (the **only target displayed**) |
+| Payload | `cmd/linux/http/x86/meterpreter_reverse_tcp` |
+| `FETCH_COMMAND` | `CURL` |
+| `FETCH_SRVPORT` | `8080` |
+| `LHOST` | **Unset** (required by current payload) |
+| `LPORT` | `4444` |
+
+**Assessment:** The exploit module is selected and the target host/port are configured. However, the selected fetch-based Meterpreter payload is **not fully configured** (`LHOST` is unset) and might not run on the legacy target. The screenshot does not show a compatible direct-shell target; do **not** assume `set TARGET 1` will work in this installed version.
+
+**Next step:** Run `show payloads` and inspect compatible choices **before running the exploit**. If a direct-interaction payload is available, prefer it. The manually confirmed Telnet/Netcat root shell is a separate method and does not imply Metasploit succeeded.
+
+**Actual configuration transcript:** [05-Metasploit-Show-Options.txt](scans/05-Metasploit-Show-Options.txt) — transcribed from the supplied screenshot. Screenshot upload pending. No Metasploit exploitation results have yet been supplied.
+
 ## 11. Troubleshooting
 
 | Symptom | Possible explanation / next step |
