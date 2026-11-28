@@ -1,0 +1,29 @@
+VULN-001 — Anonymous FTP Enumeration
+Evidence source: user-provided Kali FTP terminal screenshot and transcript.
+Target: 192.168.95.131, TCP/21
+Date: 2026-11-28 (time not visible in FTP screenshot)
+Status: Anonymous FTP login confirmed; vsftpd backdoor not yet tested.
+
+$ ftp -inv 192.168.95.131
+Connected to 192.168.95.131.
+220 (vsFTPd 2.3.4)
+ftp> user anonymous anonymous@example.com
+331 Please specify the password.
+230 Login successful.
+Remote system type is UNIX.
+Using binary mode to transfer files.
+ftp> pwd
+Remote directory: /
+ftp> ls
+229 Entering Extended Passive Mode (|||24487|).
+150 Here comes the directory listing.
+226 Directory send OK.
+ftp> quit
+221 Goodbye.
+
+Interpretation:
+- Anonymous FTP login succeeded (230).
+- Remote working directory was /.
+- LIST command completed (226), with no file entries visible in the supplied output.
+- This does not demonstrate FTP upload permission, file read access, or CVE-2011-2523 backdoor.
+- Screenshot evidence: ../screenshots/02-FTP-Enumeration.png (quantized copy of supplied PNG).
