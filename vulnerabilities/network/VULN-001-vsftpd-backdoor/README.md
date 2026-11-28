@@ -1,6 +1,6 @@
 # VULN-001 — vsftpd 2.3.4 Backdoor Command Execution
 
-> **Assessment status: Service discovered; exploitation not tested.** The 27 November 2026 Nmap scan identified vsftpd 2.3.4 and anonymous FTP access. The backdoor itself has **not** been validated.
+> **Assessment status: FTP service detected and enumerated; backdoor not yet tested.** Scans from **27 and 28 November 2026** show vsftpd 2.3.4 and Nmap-reported anonymous FTP access. No backdoor exploitation has been performed.
 >
 > [← Project home](../../../README.md) · [← Candidate index: NET-001](../../../FINDINGS-INDEX.md#net-001) · [Lab setup](../../../lab-setup/README.md)
 
@@ -19,10 +19,10 @@
 | Service | FTP, TCP 21 |
 | Backdoor listener | TCP 6200 |
 | Possible impact | Unauthenticated **root** command execution |
-| Local validation | **FTP service confirmed; backdoor not tested** |
+| Local validation | **FTP service detected and enumerated; backdoor not tested** |
 | Manual testing | **Not attempted** |
 | Metasploit testing | **Not attempted** |
-| Test date / evidence | **2026-11-27**: [baseline Nmap results](../../../lab-setup/OPEN-PORTS.md); exploit evidence pending |
+| Test date / evidence | **2026-11-27** full scan; **2026-11-28** focused FTP scan ([actual observed terminal transcript](scans/01-FTP-Service-Discovery.txt)); exploit evidence pending |
 
 ## 2. Explanation and historical incident
 
@@ -68,6 +68,30 @@ sudo nmap -sV -p 21 -oN vulnerabilities/network/VULN-001-vsftpd-backdoor/scans/0
 ```
 
 **Baseline result (2026-11-27):** Nmap 7.99 reports `21/tcp open ftp vsftpd 2.3.4` and `ftp-anon: Anonymous FTP login allowed (FTP code 230)`. See the [real scan summary](../../../lab-setup/OPEN-PORTS.md). A focused FTP scan and actual screenshot remain pending; save them to `screenshots/01-ftp-enumeration.png`.
+
+### 4.1 Focused FTP scan — actual results (28 November 2026)
+
+**Command executed on Kali:**
+```bash
+sudo nmap -sV -sC -p 21 192.168.95.131
+```
+
+**Observed evidence (Nmap 7.99, 2026-11-28 10:03 +0530):**
+```text
+Host is up (0.0023s latency).
+21/tcp open  ftp  vsftpd 2.3.4
+|_ftp-anon: Anonymous FTP login allowed (FTP code 230)
+Nmap done: 1 IP address (1 host up) scanned in 2.81 seconds
+```
+
+The `ftp-syst` response additionally reports a connection from `192.168.95.128`, ASCII transfer mode, and **plaintext control and data connections**. These results are **service enumeration**, not evidence that the malicious backdoor has been activated.
+
+**Evidence:**
+- [01 — FTP discovery terminal transcript](scans/01-FTP-Service-Discovery.txt), transcribed from the user's terminal output
+- **Screenshot supplied in conversation (28 November 2026)**, awaiting direct upload as `screenshots/01-FTP-Service-Discovery.png` (do not display a broken image link)
+- [Full-host initial reconnaissance](../../../lab-setup/OPEN-PORTS.md)
+
+**Next stage:** FTP-specific enumeration (connectivity, anonymous-access inspection and pre-exploitation port 6200 check), followed by isolated backdoor validation.
 
 ## 5. Manual exploitation — Method A: Telnet
 
@@ -216,7 +240,8 @@ In a genuine environment: remove compromised binaries, reinstall from a trusted 
 
 ## 13. Screenshot and evidence checklist
 
-- [ ] `screenshots/01-ftp-enumeration.png` — real FTP service detection
+- [ ] `screenshots/01-FTP-Service-Discovery.png` — image uploaded to GitHub (screenshot already supplied in chat)
+- [x] `scans/01-FTP-Service-Discovery.txt` — actual FTP discovery terminal transcript
 - [ ] `screenshots/02-manual-trigger.png` — actual trigger command and response
 - [ ] `screenshots/03-manual-root-proof.png` — actual `id` output
 - [ ] `screenshots/04-nmap-nse.png` — optional NSE result
@@ -225,7 +250,7 @@ In a genuine environment: remove compromised binaries, reinstall from a trusted 
 - [ ] `scans/01-ftp-version.nmap` — original scan result
 - [ ] `scans/02-nse-validation.nmap` — optional active validation output
 
-None of these evidence files have been collected or uploaded.
+The FTP discovery **terminal transcript is committed**. The supplied PNG screenshot has **not** yet been committed. Other exploitation evidence is still pending.
 
 ## 14. References
 
