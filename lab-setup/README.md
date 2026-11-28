@@ -19,7 +19,18 @@ You need **Kali Linux (attacker)** and **Metasploitable 2 (target)** on the same
 
 **First baseline scan completed:** [29 open TCP ports — 27 November 2026](OPEN-PORTS.md). The precise VirtualBox/VMware adapter isolation and snapshots have not yet been independently verified.
 
-## 2. Find the IP addresses
+## 2. Observed VM network configuration
+
+The following IP addresses were captured in the original, unedited `ifconfig` screenshots supplied for this lab on 27 November 2026:
+
+| VM | Network interface | Observed IPv4 address |
+| --- | --- | --- |
+| Kali Linux | `eth0` | `192.168.95.128/24` |
+| Metasploitable 2 | `eth0` | `192.168.95.131/24` |
+
+The original screenshots are designated `screenshots/01-Kali-Interface-ifconfig.png` and `screenshots/02-Metasploitable2-Interface-ifconfig.png`. **Direct binary upload is pending**; do not substitute modified evidence or embed broken image links. The user-supplied PNGs will appear here after their original bytes are committed.
+
+## 3. Find the IP addresses
 
 On **Metasploitable 2**:
 
@@ -39,7 +50,7 @@ Verify the IP of your target belongs to **your own isolated VM**. On Kali:
 ping -c 3 <TARGET_IP>
 ```
 
-## 3. Save the first scan
+## 4. Save the first scan
 
 In Kali, clone the project and run a single-host service scan:
 
@@ -59,7 +70,7 @@ sudo nmap -sS -p- -oA lab-setup/scans/full-tcp-scan <TARGET_IP>
 
 **Do not invent scan output.** Replace `<TARGET_IP>` with the target VM's actual isolated address.
 
-## 4. Test and document one vulnerability at a time
+## 5. Test and document one vulnerability at a time
 
 1. **Discover:** Check the running service and version in Nmap output.
 2. **Enumerate:** Investigate the service further and save logs.
@@ -69,7 +80,7 @@ sudo nmap -sS -p- -oA lab-setup/scans/full-tcp-scan <TARGET_IP>
 6. **Report:** Document actual commands, results, CVE/CWE, categories, impact, remediation, references, and failures.
 7. **Update GitHub:** Commit sanitized evidence and mark the [index](../FINDINGS-INDEX.md) with the actual verification status.
 
-## 5. Save changes to GitHub
+## 6. Save changes to GitHub
 
 From the repository directory in Kali:
 
