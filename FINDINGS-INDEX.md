@@ -1,8 +1,8 @@
 # Vulnerability catalog & finding index
 
-> **Research only — not confirmed on my VM.** This is a checklist of **89 scenarios** gathered from historical Metasploitable 2 research: 48 network/OS, 9 DVWA, and 32 Mutillidae. Some overlap or require special configuration; **89 is not an official or verified vulnerability count**.
+> **89 research scenarios; one confirmed through manual lab testing (VULN-001).** This is a checklist of **89 scenarios** gathered from historical Metasploitable 2 research: 48 network/OS, 9 DVWA, and 32 Mutillidae. Some overlap or require special configuration; **89 is not an official or verified vulnerability count**.
 
-[← Project home](README.md) · [Lab guide](lab-setup/README.md) · [First report](vulnerabilities/VULN-001-vsftpd-backdoor/README.md)
+[← Project home](README.md) · [Lab guide](lab-setup/README.md) · [First report](vulnerabilities/network/VULN-001-vsftpd-backdoor/README.md)
 
 ## 1. Vulnerability categories (explained)
 
@@ -37,7 +37,7 @@ Each candidate can have **multiple tags**. For example, vsftpd backdoor = `BD` +
 
 | ID | Candidate | Service / endpoint | CVE | Categories | Lab status | Report |
 | --- | --- | --- | --- | --- | --- | --- |
-| <a id="net-001"></a>**NET-001** | vsftpd 2.3.4 backdoor | FTP / 21 | [CVE-2011-2523](https://nvd.nist.gov/vuln/detail/CVE-2011-2523) | `BD` `RCE` | Service detected; backdoor untested | [VULN-001](vulnerabilities/network/VULN-001-vsftpd-backdoor/README.md) |
+| <a id="net-001"></a>**NET-001** | vsftpd 2.3.4 backdoor | FTP / 21 | [CVE-2011-2523](https://nvd.nist.gov/vuln/detail/CVE-2011-2523) | `BD` `RCE` | Confirmed — manual root RCE | [VULN-001](vulnerabilities/network/VULN-001-vsftpd-backdoor/README.md) |
 | <a id="net-002"></a>**NET-002** | UnrealIRCd 3.2.8.1 backdoor | IRC / 6667 | [CVE-2010-2075](https://nvd.nist.gov/vuln/detail/CVE-2010-2075) | `BD` `RCE` | Not tested | [VULN-002](vulnerabilities/network/VULN-002-unrealircd-3-2-8-1-backdoor/README.md) |
 | <a id="net-003"></a>**NET-003** | Ingreslock root bind shell | TCP / 1524 | — | `BD` `RCE` `AUTH` | Not tested | [VULN-003](vulnerabilities/network/VULN-003-ingreslock-root-bind-shell/README.md) |
 | <a id="net-004"></a>**NET-004** | DistCC remote command execution | DistCC / 3632 | [CVE-2004-2687](https://nvd.nist.gov/vuln/detail/CVE-2004-2687) | `RCE` `MIS` | Not tested | [VULN-004](vulnerabilities/network/VULN-004-distcc-remote-command-execution/README.md) |
@@ -155,4 +155,4 @@ Each candidate can have **multiple tags**. For example, vsftpd backdoor = `BD` +
 - [NVD — CVE database](https://nvd.nist.gov/)
 - [MITRE — CWE database](https://cwe.mitre.org/)
 
-All 89 report folders are **prepared**, but **no candidate has yet been confirmed through local testing**. A folder is not proof of a vulnerability.
+All 89 report folders are **prepared**. **VULN-001 is confirmed by manual root-shell evidence**; the other 88 scenarios remain untested. A folder alone is not proof of a vulnerability.
