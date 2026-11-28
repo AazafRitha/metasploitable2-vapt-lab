@@ -195,7 +195,7 @@ The screenshot also shows `pwd` returning `/` and a root-directory listing.
 
 ## 7. Evidence and references
 
-All ten tester-supplied screenshots are embedded above in their relevant stages. Raw or transcribed terminal outputs are saved in [`scans/`](scans/) and the image files in [`screenshots/`](screenshots/).
+The README displays ten evidence images in their corresponding stages. **Evidence-integrity note:** the currently committed PNGs are older processed copies, not the exact original uploads; restoration of the original unmodified files is pending. The original files have been recovered and hash-verified, and will replace the images using the same filenames so no report links change. Raw or transcribed terminal output is available in [`scans/`](scans/).
 
 **References:** [NVD CVE-2011-2523](https://nvd.nist.gov/vuln/detail/CVE-2011-2523) · [Rapid7 Metasploitable 2 guide](https://docs.rapid7.com/metasploit/metasploitable-2-exploitability-guide/) · [Metasploit module](https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/unix/ftp/vsftpd_234_backdoor.rb) · [Nmap NSE documentation](https://nmap.org/nsedoc/scripts/ftp-vsftpd-backdoor.html)
 
