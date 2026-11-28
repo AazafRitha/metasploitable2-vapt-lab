@@ -91,7 +91,25 @@ The `ftp-syst` response additionally reports a connection from `192.168.95.128`,
 - **Screenshot supplied in conversation (28 November 2026)**, awaiting direct upload as `screenshots/01-FTP-Service-Discovery.png` (do not display a broken image link)
 - [Full-host initial reconnaissance](../../../lab-setup/OPEN-PORTS.md)
 
-**Next stage:** FTP-specific enumeration (connectivity, anonymous-access inspection and pre-exploitation port 6200 check), followed by isolated backdoor validation.
+**Next stage:** FTP-specific enumeration (anonymous-access inspection), followed by controlled backdoor validation. TCP 6200 pre-check has been completed and documented.
+
+### 4.2 Pre-exploitation TCP 6200 check — actual result (28 November 2026)
+
+**Kali command executed:**
+
+```bash
+nc -nvz 192.168.95.131 6200
+```
+
+**Observed output:**
+
+```text
+(UNKNOWN) [192.168.95.131] 6200 (?) : Connection refused
+```
+
+**Interpretation:** TCP 6200 was **not accepting connections** at the time of this check, before any documented backdoor trigger. This is a useful baseline, **not evidence that CVE-2011-2523 is present or absent**. The next step is normal FTP enumeration on port 21.
+
+**Evidence:** [Pre-exploit TCP 6200 terminal output](scans/02-Pre-Exploit-Port-6200-Check.txt). The original screenshot was supplied in the conversation on 28 November 2026; a GitHub image link will be added only after a binary upload is confirmed.
 
 ## 5. Manual exploitation — Method A: Telnet
 
