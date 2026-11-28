@@ -37,7 +37,7 @@ Each candidate can have **multiple tags**. For example, vsftpd backdoor = `BD` +
 
 | ID | Candidate | Service / endpoint | CVE | Categories | Lab status | Report |
 | --- | --- | --- | --- | --- | --- | --- |
-| <a id="net-001"></a>**NET-001** | vsftpd 2.3.4 backdoor | FTP / 21 | [CVE-2011-2523](https://nvd.nist.gov/vuln/detail/CVE-2011-2523) | `BD` `RCE` | Not tested | [VULN-001](vulnerabilities/network/VULN-001-vsftpd-backdoor/README.md) |
+| <a id="net-001"></a>**NET-001** | vsftpd 2.3.4 backdoor | FTP / 21 | [CVE-2011-2523](https://nvd.nist.gov/vuln/detail/CVE-2011-2523) | `BD` `RCE` | Service detected; backdoor untested | [VULN-001](vulnerabilities/network/VULN-001-vsftpd-backdoor/README.md) |
 | <a id="net-002"></a>**NET-002** | UnrealIRCd 3.2.8.1 backdoor | IRC / 6667 | [CVE-2010-2075](https://nvd.nist.gov/vuln/detail/CVE-2010-2075) | `BD` `RCE` | Not tested | [VULN-002](vulnerabilities/network/VULN-002-unrealircd-3-2-8-1-backdoor/README.md) |
 | <a id="net-003"></a>**NET-003** | Ingreslock root bind shell | TCP / 1524 | — | `BD` `RCE` `AUTH` | Not tested | [VULN-003](vulnerabilities/network/VULN-003-ingreslock-root-bind-shell/README.md) |
 | <a id="net-004"></a>**NET-004** | DistCC remote command execution | DistCC / 3632 | [CVE-2004-2687](https://nvd.nist.gov/vuln/detail/CVE-2004-2687) | `RCE` `MIS` | Not tested | [VULN-004](vulnerabilities/network/VULN-004-distcc-remote-command-execution/README.md) |
