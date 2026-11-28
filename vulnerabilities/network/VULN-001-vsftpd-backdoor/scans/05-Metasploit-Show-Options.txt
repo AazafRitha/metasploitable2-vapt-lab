@@ -1,0 +1,40 @@
+VULN-001 — Metasploit Framework: SHOW OPTIONS (configuration only)
+Evidence: User-supplied Kali terminal screenshot, 2026-11-28
+Status: configuration observed; Metasploit exploitation NOT attempted
+
+msf exploit(unix/ftp/vsftpd_234_backdoor) > show options
+
+Module options (exploit/unix/ftp/vsftpd_234_backdoor)
+RHOSTS       192.168.95.131  [required]
+RPORT        21              [required]
+
+Current exploit target
+Id  Name
+0   Linux/Unix Command
+
+Selected payload: cmd/linux/http/x86/meterpreter_reverse_tcp
+Selected settings:
+FETCH_COMMAND      CURL
+FETCH_DELETE       false
+FETCH_FILELESS     none
+FETCH_SRVPORT      8080
+FETCH_PIPE         false
+FETCH_WRITABLE_DIR ./
+LHOST              (unset; required)
+LPORT              4444
+
+Additional options visible in screenshot:
+EXTENSIONS         (unset, optional)
+FETCH_SRVHOST      (unset, optional)
+FETCH_URLPATH      (unset, optional)
+FETCH_FILENAME     XfIJCcBT (generated random filename; non-security-significant)
+
+Interpretation:
+- RHOSTS and RPORT correctly target the isolated Metasploitable 2 FTP service.
+- The selected default payload is a fetch-based Meterpreter reverse TCP payload,
+  not a direct interactive shell.
+- LHOST is required but unset; the current payload is not fully configured.
+- Screenshot shows target 0 only. Do NOT assume a nonexistent target 1.
+- Current payload may be incompatible with the legacy Metasploitable 2 runtime.
+- No Metasploit run/session has been captured by this evidence.
+- Next evidence requested: 'show payloads'; decide based on actual compatible payloads.
