@@ -88,8 +88,10 @@ The `ftp-syst` response additionally reports a connection from `192.168.95.128`,
 
 **Evidence:**
 - [01 — FTP discovery terminal transcript](scans/01-FTP-Service-Discovery.txt), transcribed from the user's terminal output
-- **Screenshot supplied in conversation (28 November 2026)**, awaiting direct upload as `screenshots/01-FTP-Service-Discovery.png` (do not display a broken image link)
+- [01 — Actual FTP service discovery screenshot](screenshots/01-FTP-Service-Discovery.png), uploaded and embedded below
 - [Full-host initial reconnaissance](../../../lab-setup/OPEN-PORTS.md)
+
+![Actual focused Nmap scan identifying vsftpd 2.3.4 and anonymous FTP](screenshots/01-FTP-Service-Discovery.png)
 
 **Current state:** Both manual and Metasploit methods confirmed root-level code execution on 28 November 2026.
 
@@ -309,7 +311,13 @@ show options
 
 The tester's installed framework displayed only **Target 0: Linux/Unix Command**; the selected payload was `cmd/linux/http/x86/meterpreter_reverse_tcp`. No additional target was assumed.
 
+![Actual Metasploit module search and target-selection screenshot](screenshots/05-Metasploit-Module-and-Targets.png)
+
 ### 10.2 Configured options
+
+Before setting `LHOST`, the real `show options` screen showed the current fetch-based Meterpreter payload and an unset required listener address.
+
+![Actual initial Metasploit show options before LHOST was set](screenshots/06-Metasploit-Options-Before-LHOST.png)
 
 | Option | Verified setting |
 | --- | --- |
@@ -332,6 +340,10 @@ run
 ```
 
 ![Actual LHOST and LPORT command setup](screenshots/07-Metasploit-LHOST-LPORT-Commands.png)
+
+The configured `show options` output confirms `LHOST=192.168.95.128` and `LPORT=4444`.
+
+![Actual final Metasploit show options after setting LHOST and LPORT](screenshots/08-Metasploit-Configured-Options.png)
 
 Previous `show options` values were transcribed from the supplied Kali screenshot in [05-Metasploit-Show-Options.txt](scans/05-Metasploit-Show-Options.txt).
 
@@ -396,15 +408,15 @@ The report embeds the available real evidence **in the order it was collected**:
 
 | Step | Screenshot / record | Status |
 | --- | --- | --- |
-| 1. Service discovery | `01-FTP-Service-Discovery.png` | Screenshot supplied, GitHub image pending |
+| 1. Service discovery | `01-FTP-Service-Discovery.png` | Uploaded |
 | 2. Port 6200 baseline | [`02-Pre-Exploit-Port-6200.png`](screenshots/02-Pre-Exploit-Port-6200.png) | Uploaded |
 | 3. Anonymous FTP enumeration | [`02-FTP-Enumeration.png`](screenshots/02-FTP-Enumeration.png) | Uploaded |
 | 4. Manual trigger | [`03-Manual-FTP-Backdoor-Trigger.png`](screenshots/03-Manual-FTP-Backdoor-Trigger.png) | Uploaded |
 | 5. Manual root-shell proof | [`04-Manual-Root-Shell-Proof.png`](screenshots/04-Manual-Root-Shell-Proof.png) | Uploaded |
-| 6. Metasploit module/targets | `05-Metasploit-Module-and-Targets.png` | Screenshot supplied, GitHub image pending |
-| 7. Initial Metasploit options | `06-Metasploit-Options-Before-LHOST.png` | Screenshot supplied, GitHub image pending |
+| 6. Metasploit module/targets | `05-Metasploit-Module-and-Targets.png` | Uploaded |
+| 7. Initial Metasploit options | `06-Metasploit-Options-Before-LHOST.png` | Uploaded |
 | 8. LHOST/LPORT configuration | [`07-Metasploit-LHOST-LPORT-Commands.png`](screenshots/07-Metasploit-LHOST-LPORT-Commands.png) | Uploaded |
-| 9. Final Metasploit options | `08-Metasploit-Configured-Options.png` | Screenshot supplied, GitHub image pending |
+| 9. Final Metasploit options | `08-Metasploit-Configured-Options.png` | Uploaded |
 | 10. Root Meterpreter session | [`09-Metasploit-Root-Session.png`](screenshots/09-Metasploit-Root-Session.png) | Uploaded |
 
 **Terminal evidence:** [FTP discovery](scans/01-FTP-Service-Discovery.txt) · [Port 6200 baseline](scans/02-Pre-Exploit-Port-6200-Check.txt) · [Anonymous FTP](scans/03-Anonymous-FTP-Enumeration.txt) · [Manual root shell](scans/04-Manual-vsftpd-Root-Shell.txt) · [Metasploit pre-exploit options](scans/05-Metasploit-Show-Options.txt).
